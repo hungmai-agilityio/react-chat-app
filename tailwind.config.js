@@ -74,7 +74,7 @@ export default {
       },
 
       backgroundImage: {
-        auth: 'url("assets/images/bg-auth.jpg")'
+        auth: 'url("/assets/images/bg-auth.jpg")'
       },
 
       keyframes: {
