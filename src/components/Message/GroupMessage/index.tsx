@@ -8,6 +8,9 @@ import Divider from '@/components/Divider';
 import Chip from '@/components/Chip';
 import { Message } from '@/components/Message';
 
+// Utils
+import { DateConversion } from '@/utils';
+
 interface GroupedMessagesProps {
   messages: IMessage[];
   userProfiles: Map<string, { name: string; avatar: string }>;
@@ -35,7 +38,8 @@ export const GroupedMessages = memo(
         onDelete(id);
       }
     };
-    // render and group messages by date
+
+    // Render and group messages by date
     const groupedMessages = useMemo(() => {
       if (!messages.length) return [];
 
@@ -43,7 +47,7 @@ export const GroupedMessages = memo(
 
       messages.forEach((message) => {
         const date = new Date(message.time_stamp);
-        const dateString = date.toDateString();
+        const dateString = DateConversion(date);
 
         if (!grouped[dateString]) {
           grouped[dateString] = [];

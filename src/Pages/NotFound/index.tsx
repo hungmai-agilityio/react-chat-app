@@ -5,7 +5,7 @@ import { useCallback } from 'react';
 import { SIZE, TYPE, URL } from '@/constants';
 
 // Components
-import MemoizedButton from '@/components/Button';
+import Button from '@/components/Button';
 
 const NotFound = () => {
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ const NotFound = () => {
         <img src="/assets/images/404.gif" alt="404 page" />
       </div>
 
-      <MemoizedButton
+      <Button
         name="Go Home"
         variant={TYPE.PRIMARY}
         size={SIZE.SMALL}

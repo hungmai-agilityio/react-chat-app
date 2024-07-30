@@ -1,4 +1,4 @@
-import { convertBase64, timeStampConversion } from '@/utils';
+import { convertBase64, DateConversion, timeStampConversion } from '@/utils';
 
 describe('timeStampConversion', () => {
   it('should return time in HH:mm format if the timestamp is from today', () => {
@@ -37,5 +37,28 @@ describe('convertBase64', () => {
 
   it('should fails with an error', async () => {
     await expect(convertBase64({} as File)).rejects.toThrowError();
+  });
+
+  describe('DateConversion', () => {
+    const now = new Date();
+
+    it('should return today', () => {
+      const result = DateConversion(now);
+      expect(result).toBe('Today');
+    });
+
+    it('should return yesterday', () => {
+      const yesterday = new Date();
+      yesterday.setDate(now.getDate() - 1);
+
+      const result = DateConversion(yesterday);
+      expect(result).toBe('Yesterday');
+    });
+
+    it('should return other date format', () => {
+      const otherDay = new Date('2023-06-15T08:35:00.000Z');
+      const result = DateConversion(otherDay);
+      expect(result).toBe(otherDay.toDateString());
+    });
   });
 });

@@ -14,14 +14,20 @@ export const useChats = (): IChat[] => {
   const [chats, setChats] = useState<IChat[]>([]);
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, END_POINT.CHAT), (snapshot) => {
-      const chatsData = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id } as IChat));
-      setChats(chatsData);
-    });
+    const unsubscribe = onSnapshot(
+      collection(db, END_POINT.CHAT),
+      (snapshot) => {
+        const chatsData = snapshot.docs.map((doc) => {
+          const data = doc.data() as IChat;
+
+          return { ...data, id: data.id };
+        });
+        setChats(chatsData);
+      }
+    );
 
     return unsubscribe;
   }, []);
 
   return chats;
 };
-

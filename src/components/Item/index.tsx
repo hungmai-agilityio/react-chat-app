@@ -11,7 +11,7 @@ import { faCircle, faXmark } from '@fortawesome/free-solid-svg-icons';
 // Components
 import Avatar from '@/components/Avatar';
 import { UserProps } from '@/components/UserRoom';
-import MemoizedIcon from '@/components/Button/Icon';
+import Icon from '@/components/Button/Icon';
 
 export interface ItemUserProps extends UserProps {
   isCurrentUser?: boolean;
@@ -81,7 +81,7 @@ export const ItemUser = memo(
         </div>
 
         {isGroup && isOwner && !isCurrentUser && (
-          <MemoizedIcon icon={faXmark} onClick={handleRemove} isHover />
+          <Icon icon={faXmark} onClick={handleRemove} isHover />
         )}
       </div>
     );

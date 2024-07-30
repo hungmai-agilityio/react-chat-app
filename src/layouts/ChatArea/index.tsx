@@ -47,7 +47,7 @@ import {
 // Components
 import Avatar from '@/components/Avatar';
 import Input from '@/components/Input';
-import MemoizedButton from '@/components/Button';
+import Button from '@/components/Button';
 import Dropdown, { DropdownItem } from '@/components/Dropdown';
 import Modal from '@/components/Modal';
 import ModalInfo from '@/components/Modal/Info';
@@ -69,8 +69,10 @@ const ChatArea = ({ selectedRoom, selectedUser }: ChatProps) => {
   const [user, setUser] = useState<IUser | null>(null);
   const [editingMessage, setEditingMessage] = useState<string | null>(null);
   const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [isChatDisabled, setIsChatDisabled] = useState<boolean>(true);
 
   const inputRef = useRef<HTMLDivElement>(null);
+  const messagesRef = useRef<HTMLDivElement>(null);
 
   // Store + Hooks
   const { currentUser } = useAuthStore();
@@ -82,6 +84,8 @@ const ChatArea = ({ selectedRoom, selectedUser }: ChatProps) => {
     let unsubscribe: (() => void) | null = null;
 
     if (selectedRoom) {
+      setIsChatDisabled(false);
+
       (async () => {
         const chat = await getChatById(selectedRoom);
         setChatData(chat.data);
@@ -112,6 +116,8 @@ const ChatArea = ({ selectedRoom, selectedUser }: ChatProps) => {
     let unsubscribe: (() => void) | null = null;
 
     if (selectedUser) {
+      setIsChatDisabled(false);
+
       (async () => {
         const userData = await getUserById(selectedUser);
         setUser(userData.data);
@@ -146,6 +152,12 @@ const ChatArea = ({ selectedRoom, selectedUser }: ChatProps) => {
     ref: inputRef,
     handler: () => setIsFocused(false)
   });
+
+  // Scroll view to bottom (last messages)
+
+  useEffect(() => {
+    messagesRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   // Memoized user profiles for optimization
   const userProfiles = useMemo(() => {
@@ -305,12 +317,15 @@ const ChatArea = ({ selectedRoom, selectedUser }: ChatProps) => {
   });
 
   const profile = user ? profiles[user.id] : null;
-  const isChatDisabled = !(selectedRoom || selectedUser);
 
   // Handle current user leave chat group
   const handleLeaveGroup = useCallback(async () => {
     await UserLeaveGroup(chatData!.id, currentUser?.id);
     setIsOpenInfoModal(false);
+    setMessages([]);
+    setChatData(null);
+    setUser(null);
+    setIsChatDisabled(true);
   }, [chatData, currentUser?.id]);
 
   /**
@@ -440,6 +455,7 @@ const ChatArea = ({ selectedRoom, selectedUser }: ChatProps) => {
             onEdit={handleEditMessage}
             onDelete={handleOpenModalRemove}
           />
+          <div ref={messagesRef}></div>
         </div>
         <div
           ref={inputRef}
@@ -458,13 +474,13 @@ const ChatArea = ({ selectedRoom, selectedUser }: ChatProps) => {
             <div className="float-right">
               <div className="flex gap-5">
                 {isEdit && (
-                  <MemoizedButton
+                  <Button
                     name="Cancel"
                     onClick={handleCancelEdit}
                     size={SIZE.MINI}
                   />
                 )}
-                <MemoizedButton
+                <Button
                   name={isEdit ? 'Update' : 'Send'}
                   onClick={isEdit ? handleUpdateMessage : handleSend}
                   isDisabled={value.length === 0 || isChatDisabled}
@@ -520,13 +536,13 @@ const ChatArea = ({ selectedRoom, selectedUser }: ChatProps) => {
           </p>
 
           <div className="mt-5 flex gap-3 justify-center">
-            <MemoizedButton
+            <Button
               name="Cancel"
               onClick={handleCloseModalRemove}
               variant={TYPE.SECOND}
               size={SIZE.MINI}
             />
-            <MemoizedButton
+            <Button
               name="OK"
               onClick={handleRemoveMessage}
               variant={TYPE.PRIMARY}

@@ -1,5 +1,4 @@
 import { clsx } from 'clsx';
-import { memo } from 'react';
 
 // FontAwesome
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
@@ -27,5 +26,4 @@ const Icon = ({ icon, styles, isHover = true, onClick }: IconProps) => {
   );
 };
 
-const MemoizedIcon = memo(Icon);
-export default MemoizedIcon;
+export default Icon;

@@ -11,7 +11,7 @@ import { SIZE, TYPE, URL } from '@/constants';
 import { AuthProps } from '@/interfaces';
 
 // Components
-import MemoizedButton from '@/components/Button';
+import Button from '@/components/Button';
 import Form from '@/components/Form';
 import Input from '@/components/Input';
 
@@ -59,7 +59,7 @@ const SignIn = ({
           onClick={toggleShowPassword}
           message={message?.password}
         />
-        <MemoizedButton
+        <Button
           name="Login"
           variant={TYPE.PRIMARY}
           onClick={onClick}

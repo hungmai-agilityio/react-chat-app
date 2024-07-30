@@ -12,7 +12,7 @@ import { useOutsideClick } from '@/hooks';
 import { POSITION } from '@/constants';
 
 // Components
-import MemoizedIcon from '@/components/Button/Icon';
+import Icon from '@/components/Button/Icon';
 
 export interface DropdownItem {
   value: string;
@@ -78,7 +78,7 @@ const Dropdown = ({
         onClick={toggleDropdown}
       >
         {children}
-        {icon && <MemoizedIcon icon={icon} isHover={isHover} />}
+        {icon && <Icon icon={icon} isHover={isHover} />}
       </div>
       {isOpen && (
         <ul

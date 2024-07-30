@@ -12,8 +12,8 @@ import {
 import { SIZE, TYPE } from '@/constants';
 
 // Component
-import MemoizedIcon from '@/components/Button/Icon';
-import MemoizedButton from '@/components/Button';
+import Icon from '@/components/Button/Icon';
+import Button from '@/components/Button';
 
 export interface ModalProps {
   isOpen: boolean;
@@ -48,23 +48,23 @@ const Modal = ({
             <div className="border-b border-gray-300">
               <div className="flex justify-between items-center relative m-1">
                 {onReturn ? (
-                  <MemoizedIcon icon={faArrowLeft} onClick={onReturn} />
+                  <Icon icon={faArrowLeft} onClick={onReturn} />
                 ) : (
-                  <MemoizedIcon icon={faTimes} onClick={onCloseModal} />
+                  <Icon icon={faTimes} onClick={onCloseModal} />
                 )}
                 <p className="absolute left-1/2 transform -translate-x-1/2 font-semibold text-dark w-40 truncate text-center">
                   {title}
                 </p>
                 <div className="flex items-center">
                   {btnPrimary && (
-                    <MemoizedButton
+                    <Button
                       name={btnPrimary}
                       onClick={onClick!}
                       size={SIZE.SMALL}
                       variant={TYPE.PRIMARY}
                     />
                   )}
-                  {icon && <MemoizedIcon icon={icon} onClick={onClick} />}
+                  {icon && <Icon icon={icon} onClick={onClick} />}
                 </div>
               </div>
             </div>

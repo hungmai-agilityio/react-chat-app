@@ -5,7 +5,7 @@ import { SIZE, TYPE } from '@/constants';
 import Avatar from '@/components/Avatar';
 import { ItemUser, ItemUserProps } from '@/components/Item';
 import Divider from '@/components/Divider';
-import MemoizedButton from '@/components/Button';
+import Button from '@/components/Button';
 
 interface InfoProps {
   currentUserId: string;
@@ -65,7 +65,7 @@ const ModalInfo = ({
       </div>
       {isGroup && (
         <div className="absolute -bottom-20 left-4">
-          <MemoizedButton
+          <Button
             name="Leave chat"
             onClick={onClick!}
             variant={TYPE.SECOND}

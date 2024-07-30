@@ -17,7 +17,7 @@ import Sidebar from '@/components/Sidebar';
 import { Tabs } from '@/components/Tabs';
 import { Panel } from '@/components/Tabs/Panel';
 import Search from '@/components/Search';
-import MemoizedButton from '@/components/Button';
+import Button from '@/components/Button';
 import UserMenu from '@/components/Dropdown/UserMenu';
 import { ListUser } from '@/components/UserRoom/List';
 import ModalAction from '@/components/Modal/Action';
@@ -32,7 +32,8 @@ import { IChat, IMessage, IUser } from '@/interfaces';
 import {
   createChat,
   getChatsByUserId,
-  getLastMessagesByRoomId
+  getLastMessagesByRoomId,
+  listenToChats
 } from '@/services';
 
 // Utils
@@ -83,19 +84,30 @@ const Layout = () => {
 
   // Fetch chats when currentUser changes
   useEffect(() => {
+    if (!currentUser) return;
+    let cleanup: (() => void) | null = null;
+
     const fetchChats = async () => {
-      if (currentUser) {
-        const response = await getChatsByUserId(currentUser.id);
-        setChats(response.data!);
-
-        const roomIds = response.data!.map((chat) => chat.id);
-        const { data } = await getLastMessagesByRoomId(roomIds);
-
-        setLastMessages(data!);
+      const { data } = await getChatsByUserId(currentUser.id);
+      setChats(data || []);
+      if (data) {
+        const roomIds = data.map((chat) => chat.id);
+        return getLastMessagesByRoomId(roomIds, setLastMessages);
       }
     };
 
-    fetchChats();
+    const subscribeToChats = () => {
+      cleanup = listenToChats(currentUser.id, setChats);
+    };
+
+    (async () => {
+      await fetchChats();
+      subscribeToChats();
+    })();
+
+    return () => {
+      if (cleanup) cleanup();
+    };
   }, [currentUser]);
 
   // Handle change tab in sidebar
@@ -128,6 +140,26 @@ const Layout = () => {
   const filterUser = useMemo(() => {
     return searchFilter<IUser>(users, debouncedSearch, ['userName']);
   }, [users, debouncedSearch]);
+
+  // Search filter chat
+  const filterChats = useMemo(() => {
+    return chats.filter((chat) => {
+      if (chat.title) {
+        return chat.title.toLowerCase().includes(debouncedSearch.toLowerCase());
+      }
+
+      const member = chat.members.find((item) => item !== currentUser?.id);
+      const memberDetail = users.find((user) => user.id === member);
+
+      if (memberDetail) {
+        return memberDetail.userName
+          .toLowerCase()
+          .includes(debouncedSearch.toLowerCase());
+      }
+
+      return false;
+    });
+  }, [chats, debouncedSearch, users, currentUser]);
 
   // Handle selected user to open new chat area
   const handleSelectedRoom = useCallback((id: string, isUser: boolean) => {
@@ -223,7 +255,7 @@ const Layout = () => {
                 />
               </div>
               <ListUser
-                data={chats}
+                data={filterChats}
                 profiles={profiles}
                 onSelected={handleSelectedRoom}
                 isActive
@@ -232,7 +264,7 @@ const Layout = () => {
               />
             </div>
             <div className="mt-auto p-2">
-              <MemoizedButton
+              <Button
                 name="New Chat"
                 onClick={handleToggleNewChatModal}
                 iconLeft={faPlus}
@@ -296,8 +328,6 @@ const Layout = () => {
           onChecked={handleChecked}
           users={users}
           profiles={profiles}
-          onSearch={() => {}}
-          value=""
         />
       </Modal>
     </div>

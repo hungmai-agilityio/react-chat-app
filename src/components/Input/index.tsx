@@ -8,7 +8,7 @@ import { IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { TYPE } from '@/constants';
 
 // Components
-import MemoizedIcon from '@/components/Button/Icon';
+import Icon from '@/components/Button/Icon';
 
 interface InputProps {
   label?: string;
@@ -93,11 +93,7 @@ const Input = ({
           />
         )}
         {icon && (
-          <MemoizedIcon
-            icon={icon}
-            onClick={onClick}
-            styles="absolute top-2 right-2"
-          />
+          <Icon icon={icon} onClick={onClick} styles="absolute top-2 right-2" />
         )}
       </div>
       {message && (

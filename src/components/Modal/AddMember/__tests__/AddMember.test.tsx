@@ -10,7 +10,6 @@ import AddMember from '@/components/Modal/AddMember';
 const propsDefault = {
   users: mockUsers,
   profiles: mockProfiles,
-  onSearch: jest.fn(),
   onChecked: jest.fn(),
   value: '',
   isActive: false,
@@ -39,7 +38,7 @@ describe('AddMember', () => {
   });
 
   it('handles search input and checks value', () => {
-    render(<AddMember {...propsDefault} value="Faker" />);
+    render(<AddMember {...propsDefault} />);
 
     const searchInput = screen.queryByPlaceholderText(
       'Search'

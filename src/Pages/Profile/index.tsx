@@ -21,7 +21,7 @@ import { getUserByEmail, updateUser } from '@/services';
 import { useAuthStore } from '@/stores';
 
 // Components
-import MemoizedButton from '@/components/Button';
+import Button from '@/components/Button';
 import Input from '@/components/Input';
 import Upload from '@/components/Upload';
 
@@ -214,7 +214,7 @@ const Profile = () => {
           </div>
         </div>
         <div className="mt-5">
-          <MemoizedButton
+          <Button
             name="Update Profile"
             variant={TYPE.PRIMARY}
             size={SIZE.MEDIUM}

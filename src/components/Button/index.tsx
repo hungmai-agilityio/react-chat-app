@@ -1,5 +1,4 @@
 import { clsx } from 'clsx';
-import { memo } from 'react';
 
 // Constants
 import { SIZE, TYPE } from '@/constants';
@@ -65,5 +64,4 @@ const Button = ({
   );
 };
 
-const MemoizedButton = memo(Button);
-export default MemoizedButton;
+export default Button;

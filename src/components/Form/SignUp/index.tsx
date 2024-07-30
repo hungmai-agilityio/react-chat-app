@@ -11,7 +11,7 @@ import { SIZE, TYPE, URL } from '@/constants';
 import { AuthProps } from '@/interfaces';
 
 // Components
-import MemoizedButton from '@/components/Button';
+import Button from '@/components/Button';
 import Form from '@/components/Form';
 import Input from '@/components/Input';
 
@@ -88,7 +88,7 @@ const SignUp = ({
           message={message?.confirm}
         />
         <div className="mt-8">
-          <MemoizedButton
+          <Button
             name="Register"
             variant={TYPE.PRIMARY}
             onClick={onClick!}

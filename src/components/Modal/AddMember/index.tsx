@@ -1,4 +1,4 @@
-import { ChangeEvent } from 'react';
+import { ChangeEvent, useState, useMemo, useCallback } from 'react';
 
 // Interfaces
 import { IProfile, IUser } from '@/interfaces';
@@ -9,12 +9,13 @@ import { ItemUser } from '@/components/Item';
 import Search from '@/components/Search';
 import Divider from '@/components/Divider';
 
+// Utils
+import { debounce } from '@/utils';
+
 interface AddMemberProps {
   users: IUser[];
   profiles: Record<string, IProfile>;
-  onSearch: (event: ChangeEvent<HTMLInputElement>) => void;
   onChecked: (id: string) => void;
-  value: string;
   isActive: boolean;
   currentUserId: string;
   checkedUsers: string[];
@@ -23,14 +24,41 @@ interface AddMemberProps {
 const AddMember = ({
   users,
   profiles,
-  onSearch,
   onChecked,
-  value,
   isActive,
   currentUserId,
   checkedUsers
 }: AddMemberProps) => {
-  const filteredUsers = users.filter((user) => user.id !== currentUserId);
+  const [searchValue, setSearchValue] = useState<string>('');
+  const [debouncedSearchValue, setDebouncedSearchValue] = useState<string>('');
+
+  // Creates a debounced version of the search function.
+  const debouncedSearch = useCallback(
+    debounce((value: string) => {
+      setDebouncedSearchValue(value);
+    }),
+    []
+  );
+
+  /**
+   * Handles changes to the search input.
+   * Updates the searchValue state and triggers the debounced search function.
+   * @param event - The input change event.
+   */
+  const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const newValue = event.target.value;
+    setSearchValue(newValue);
+    debouncedSearch(newValue);
+  };
+
+  // Filters the list of users based on the search query.
+  const filteredUsers = useMemo(() => {
+    return users
+      .filter((user) => user.id !== currentUserId)
+      .filter((user) =>
+        user.userName.toLowerCase().includes(debouncedSearchValue.toLowerCase())
+      );
+  }, [users, debouncedSearchValue, currentUserId]);
 
   return (
     <div className="max-h-modal-body overflow-hidden">
@@ -55,7 +83,7 @@ const AddMember = ({
         </div>
       )}
       <div className="bg-tertiary border-b-xs border-solid border-primary w-full px-4 py-1">
-        <Search onChange={onSearch} value={value} />
+        <Search onChange={handleSearchChange} value={searchValue} />
       </div>
       <div className="h-modal-body hover:overflow-y-auto scrollbar">
         {filteredUsers.map((user) => {

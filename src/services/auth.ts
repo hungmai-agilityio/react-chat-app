@@ -14,8 +14,11 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 // Interfaces
 import { ApiResponse, IProfile, IUser } from '@/interfaces';
 
-const userCollection = collection(db, 'users');
-const profileCollection = collection(db, 'profiles');
+// Constants
+import { END_POINT } from '@/constants';
+
+const userCollection = collection(db, END_POINT.USER);
+const profileCollection = collection(db, END_POINT.PROFILE);
 
 /**
  * Add a new user account

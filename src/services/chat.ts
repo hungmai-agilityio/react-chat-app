@@ -74,6 +74,26 @@ export const createChat = async (
   }
 };
 
+export const listenToChats = (
+  userId: string,
+  setChats: React.Dispatch<React.SetStateAction<IChat[]>>
+) => {
+  const chatsQuery = query(
+    collection(db, END_POINT.CHAT),
+    where('members', 'array-contains', userId)
+  );
+  return onSnapshot(chatsQuery, (snapshot) => {
+    const updatedChats = snapshot.docs.map((doc) => {
+      const data = doc.data() as IChat;
+      return {
+        ...data,
+        id: data.id
+      };
+    });
+    setChats(updatedChats);
+  });
+};
+
 /** Get chat by room id
  * @param {string} chatId
  * @returns {Promise<ApiResponse<DocumentData >>}
@@ -242,54 +262,62 @@ export const getMessagesByRoomId = (
   callback: (messages: IMessage[]) => void
 ) => {
   const messagesRef = collection(db, END_POINT.MESSAGE);
-  const queryData = query(messagesRef, where('roomId', '==', roomId), orderBy('time_stamp', 'desc'));
+  const queryData = query(
+    messagesRef,
+    where('roomId', '==', roomId),
+    orderBy('time_stamp', 'desc'),
+    limit(50)
+  );
 
   const unsubscribe = onSnapshot(queryData, (snapshot) => {
     const messages: IMessage[] = snapshot.docs.map((doc) => ({
-      ...doc.data() as IMessage,
+      ...(doc.data() as IMessage)
     }));
     callback(messages);
   });
 
   return unsubscribe;
-}
+};
 
 /**
- * Get last messages by room id
- * @param {string} roomId
- * @returns { Promise<ApiResponse<IMessage>>}
+ * Fetch the last messages by room ids.
+ *
+ * @param {string[]} roomIds - An array of room IDs to fetch the last messages for.
+ * @param {React.Dispatch<React.SetStateAction<Record<string, IMessage>>>} setLastMessages - A state setter function to update the last messages.
+ * @returns {Function} - A function to unsubscribe from all Firestore listeners.
  */
-export const getLastMessagesByRoomId = async (
-  roomId: string[]
-): Promise<ApiResponse<Record<string, IMessage>>> => {
-  try {
-    const lastMessages: Record<string, IMessage> = {};
+export const getLastMessagesByRoomId = (
+  roomIds: string[],
+  setLastMessages: React.Dispatch<
+    React.SetStateAction<Record<string, IMessage>>
+  >
+) => {
+  const unsubscribe = roomIds.map((roomId) => {
+    const messagesRef = collection(db, END_POINT.MESSAGE);
+    const queryData = query(
+      messagesRef,
+      where('roomId', '==', roomId),
+      orderBy('time_stamp', 'desc'),
+      limit(1)
+    );
 
-    const promises = roomId.map(async (roomId) => {
-      const messagesRef = collection(db, END_POINT.MESSAGE);
-      const queryData = query(messagesRef, where('roomId', '==', roomId), orderBy('time_stamp', 'desc'), limit(1));
-      const querySnapshot = await getDocs(queryData);
-
-      if (!querySnapshot.empty) {
-        const doc = querySnapshot.docs[0];
+    return onSnapshot(queryData, (snapshot) => {
+      if (!snapshot.empty) {
+        const doc = snapshot.docs[0];
         const message = doc.data() as IMessage;
-        lastMessages[roomId] = { ...message };
+        setLastMessages((prevMessages) => ({
+          ...prevMessages,
+          [roomId]: message
+        }));
       }
     });
+  });
 
-    await Promise.all(promises);
-
-    return {
-      data: lastMessages,
-      error: null
-    };
-  } catch (error) {
-    return {
-      data: null,
-      error
-
-    };
-  }
+  return () => {
+    unsubscribe.map((unsub) => {
+      unsub();
+    });
+  };
 };
 
 /**
@@ -340,7 +368,7 @@ export const updateMessage = async (
   try {
     const messagesCollectionRef = collection(db, END_POINT.MESSAGE);
 
-    const queryData = query(messagesCollectionRef, where("id", "==", data.id));
+    const queryData = query(messagesCollectionRef, where('id', '==', data.id));
     const querySnapshot = await getDocs(queryData);
 
     const docRef = querySnapshot.docs[0].ref;
@@ -366,9 +394,7 @@ export const updateMessage = async (
  * Remove message
  * @param {string} messageId
  */
-export const removeMessage = async (
-  messageId: string,
-) => {
+export const removeMessage = async (messageId: string) => {
   try {
     const msg = query(
       collection(db, END_POINT.MESSAGE),

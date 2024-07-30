@@ -8,7 +8,6 @@ jest.mock('firebase/firestore', () => ({
   collection: jest.fn(),
   onSnapshot: jest.fn(),
   getFirestore: jest.fn(() => ({})),
-
 }));
 
 describe('useChats', () => {

@@ -12,7 +12,7 @@ import { IconDefinition } from '@fortawesome/free-solid-svg-icons';
 // Components
 import Avatar from '@/components/Avatar';
 import Input from '@/components/Input';
-import MemoizedButton from '@/components/Button';
+import Button from '@/components/Button';
 
 interface ModalActionProps {
   btnName?: string;
@@ -88,7 +88,7 @@ const ModalAction = ({
       </div>
       {btnName && (
         <div className="absolute top-lg right-xs">
-          <MemoizedButton
+          <Button
             name={btnName}
             onClick={onClick!}
             iconRight={icon}

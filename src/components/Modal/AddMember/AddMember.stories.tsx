@@ -20,14 +20,8 @@ const meta: Meta<typeof AddMember> = {
     profiles: {
       description: 'User details by user id'
     },
-    onSearch: {
-      description: 'Handles searching for users in lists'
-    },
     onChecked: {
       description: 'Handles check users to add to the member list'
-    },
-    value: {
-      description: 'Input value for searching?'
     },
     isActive: {
       description: 'Check if any users are connected'
@@ -46,9 +40,7 @@ export const Default: Story = {
   args: {
     users: mockUsers,
     profiles: mockProfiles,
-    onSearch: () => {},
     onChecked: (id) => console.log('Checked user ID:', id),
-    value: '',
     isActive: true,
     currentUserId: '701796f0-0253-11ef-804b-d90ac4375227',
     checkedUsers: []
@@ -70,9 +62,7 @@ export const MemberChecked: Story = {
   args: {
     users: mockUsers,
     profiles: mockProfiles,
-    onSearch: () => {},
     onChecked: (id) => console.log('Checked user ID:', id),
-    value: '',
     isActive: true,
     currentUserId: '701796f0-0253-11ef-804b-d90ac4375227',
     checkedUsers: ['8a741820-0253-11ef-804b-d90ac4375227']
