@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Checkbox should be render match to snapshot when checked 1`] = `
+<div>
+  <div
+    class="pl-3 flex items-center gap-4 w-full bg-blue-50"
+    id="701796f0-0253-11ef-804b-d90ac4375227"
+  >
+    <input
+      checked=""
+      class="w-5 h-5 accent-primary"
+      type="checkbox"
+    />
+    <label
+      class="w-full"
+    >
+      John
+    </label>
+  </div>
+</div>
+`;
+
+exports[`Checkbox should be render match to snapshot when unchecked 1`] = `
+<div>
+  <div
+    class="pl-3 flex items-center gap-4 w-full"
+    id="701796f0-0253-11ef-804b-d90ac4375227"
+  >
+    <input
+      class="w-5 h-5 accent-primary"
+      type="checkbox"
+    />
+    <label
+      class="w-full"
+    >
+      John
+    </label>
+  </div>
+</div>
+`;

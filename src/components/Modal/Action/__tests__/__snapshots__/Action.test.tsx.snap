@@ -1,0 +1,118 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Modal Action should render match to snapshot - Button click 1`] = `
+<div>
+  <div
+    class="relative mt-5"
+  >
+    <div
+      class="absolute left-1/2 transform -translate-x-1/2"
+    >
+      <div
+        class="text-primary bg-gray-300 flex items-center justify-center font-semibold rounded-lg w-avatar-lg h-avatar-lg text-8xl"
+        data-testid="avatar"
+      />
+      <input
+        accept="image/*"
+        class="hidden"
+        data-testid="file-input"
+        id="upload"
+        type="file"
+      />
+    </div>
+    <div
+      class="absolute top-32 left-1/2 transform -translate-x-1/2"
+    >
+      <div
+        class="mt-4 w-72"
+      >
+        <div
+          class="mb-3"
+        >
+          <div
+            class="relative"
+          >
+            <input
+              class="w-full mt-1.5 outline-none p-3 focus:border-primary h-10 border-b border-gray-400 text-center"
+              placeholder="Chat name"
+              type="text"
+              value=""
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="absolute top-lg right-xs"
+    >
+      <button
+        class="font-semibold hover:brightness-90 bg-tertiary cursor-not-allowed border hover:filter-none text-stone-500 w-40 h-9 bg-primary text-white"
+        disabled=""
+      >
+        Save
+        <svg
+          aria-hidden="true"
+          class="svg-inline--fa fa-arrow-right ml-2"
+          data-icon="arrow-right"
+          data-prefix="fas"
+          focusable="false"
+          role="img"
+          viewBox="0 0 448 512"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"
+            fill="currentColor"
+          />
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Modal Action should render match to snapshot - Default 1`] = `
+<div>
+  <div
+    class="relative mt-5"
+  >
+    <div
+      class="absolute left-1/2 transform -translate-x-1/2"
+    >
+      <div
+        class="text-primary bg-gray-300 flex items-center justify-center font-semibold rounded-lg w-avatar-lg h-avatar-lg text-8xl"
+        data-testid="avatar"
+      />
+      <input
+        accept="image/*"
+        class="hidden"
+        data-testid="file-input"
+        id="upload"
+        type="file"
+      />
+    </div>
+    <div
+      class="absolute top-32 left-1/2 transform -translate-x-1/2"
+    >
+      <div
+        class="mt-4 w-72"
+      >
+        <div
+          class="mb-3"
+        >
+          <div
+            class="relative"
+          >
+            <input
+              class="w-full mt-1.5 outline-none p-3 focus:border-primary h-10 border-b border-gray-400 text-center"
+              placeholder="Chat name"
+              type="text"
+              value=""
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

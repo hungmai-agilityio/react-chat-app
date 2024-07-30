@@ -1,0 +1,369 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AddMember should be render match to snapshot when checked 1`] = `
+<div>
+  <div
+    class="max-h-modal-body overflow-hidden"
+  >
+    <div
+      class="flex items-center p-3 gap-2 overflow-hidden hover:overflow-x-auto scrollbar"
+    >
+      <div
+        class="flex items-center justify-between"
+      >
+        <div
+          class="text-sm px-3 w-20"
+        >
+          <div
+            class="relative mb-2"
+          >
+            <div
+              class="text-primary bg-gray-300 flex items-center justify-center font-semibold rounded-full my-0 mx-auto w-avatar-sm h-avatar-sm text-lg"
+              data-testid="avatar"
+            >
+              M
+            </div>
+          </div>
+          <p
+            class="inline-block max-w-28 whitespace-normal h-7 text-xs w-full overflow-hidden text-center"
+          >
+            Mary
+          </p>
+        </div>
+      </div>
+      <div
+        class="flex items-center justify-between"
+      >
+        <div
+          class="text-sm px-3 w-20"
+        >
+          <div
+            class="relative mb-2"
+          >
+            <div
+              class="text-primary bg-gray-300 flex items-center justify-center font-semibold rounded-full my-0 mx-auto w-avatar-sm h-avatar-sm text-lg"
+              data-testid="avatar"
+            >
+              F
+            </div>
+          </div>
+          <p
+            class="inline-block max-w-28 whitespace-normal h-7 text-xs w-full overflow-hidden text-center"
+          >
+            Faker
+          </p>
+        </div>
+      </div>
+    </div>
+    <div
+      class="bg-tertiary border-b-xs border-solid border-primary w-full px-4 py-1"
+    >
+      <div
+        class="relative"
+      >
+        <input
+          class="border border-gray-300 focus:border-primary outline-none w-full h-10 pl-4 pr-9"
+          placeholder="Search"
+          value=""
+        />
+      </div>
+    </div>
+    <div
+      class="h-modal-body hover:overflow-y-auto scrollbar"
+    >
+      <div>
+        <div
+          class="pl-3 flex items-center gap-4 w-full bg-blue-50"
+          id="8a741820-0253-11ef-804b-d90ac4375227"
+        >
+          <input
+            checked=""
+            class="w-5 h-5 accent-primary"
+            type="checkbox"
+          />
+          <label
+            class="w-full"
+          >
+            <div
+              class="flex items-center justify-between"
+            >
+              <div
+                class="text-sm px-3 w-20 flex items-center gap-3 w-full h-item"
+              >
+                <div
+                  class="relative"
+                >
+                  <div
+                    class="text-primary bg-gray-300 flex items-center justify-center font-semibold rounded-full my-0 mx-auto w-avatar-sm h-avatar-sm text-lg"
+                    data-testid="avatar"
+                  >
+                    M
+                  </div>
+                  <svg
+                    aria-hidden="true"
+                    class="svg-inline--fa fa-circle absolute text-gray-400 border-xs border-white rounded-full top-6 left-7"
+                    data-icon="circle"
+                    data-prefix="fas"
+                    focusable="false"
+                    role="img"
+                    viewBox="0 0 512 512"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                </div>
+                <div
+                  class="flex flex-col truncate"
+                >
+                  <p>
+                    Mary
+                     
+                  </p>
+                </div>
+              </div>
+            </div>
+          </label>
+        </div>
+        <div
+          class="flex items-center"
+        >
+          <div
+            class="border-b border-gray-300 w-full"
+          />
+          <div
+            class="border-b border-gray-300 w-full"
+          />
+        </div>
+      </div>
+      <div>
+        <div
+          class="pl-3 flex items-center gap-4 w-full bg-blue-50"
+          id="e7d1d160-078f-11ef-9ebd-d50e40f719a7"
+        >
+          <input
+            checked=""
+            class="w-5 h-5 accent-primary"
+            type="checkbox"
+          />
+          <label
+            class="w-full"
+          >
+            <div
+              class="flex items-center justify-between"
+            >
+              <div
+                class="text-sm px-3 w-20 flex items-center gap-3 w-full h-item"
+              >
+                <div
+                  class="relative"
+                >
+                  <div
+                    class="text-primary bg-gray-300 flex items-center justify-center font-semibold rounded-full my-0 mx-auto w-avatar-sm h-avatar-sm text-lg"
+                    data-testid="avatar"
+                  >
+                    F
+                  </div>
+                  <svg
+                    aria-hidden="true"
+                    class="svg-inline--fa fa-circle absolute text-gray-400 border-xs border-white rounded-full top-6 left-7"
+                    data-icon="circle"
+                    data-prefix="fas"
+                    focusable="false"
+                    role="img"
+                    viewBox="0 0 512 512"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                </div>
+                <div
+                  class="flex flex-col truncate"
+                >
+                  <p>
+                    Faker
+                     
+                  </p>
+                </div>
+              </div>
+            </div>
+          </label>
+        </div>
+        <div
+          class="flex items-center"
+        >
+          <div
+            class="border-b border-gray-300 w-full"
+          />
+          <div
+            class="border-b border-gray-300 w-full"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`AddMember should be render match to snapshot when uncheck 1`] = `
+<div>
+  <div
+    class="max-h-modal-body overflow-hidden"
+  >
+    <div
+      class="bg-tertiary border-b-xs border-solid border-primary w-full px-4 py-1"
+    >
+      <div
+        class="relative"
+      >
+        <input
+          class="border border-gray-300 focus:border-primary outline-none w-full h-10 pl-4 pr-9"
+          placeholder="Search"
+          value=""
+        />
+      </div>
+    </div>
+    <div
+      class="h-modal-body hover:overflow-y-auto scrollbar"
+    >
+      <div>
+        <div
+          class="pl-3 flex items-center gap-4 w-full"
+          id="8a741820-0253-11ef-804b-d90ac4375227"
+        >
+          <input
+            class="w-5 h-5 accent-primary"
+            type="checkbox"
+          />
+          <label
+            class="w-full"
+          >
+            <div
+              class="flex items-center justify-between"
+            >
+              <div
+                class="text-sm px-3 w-20 flex items-center gap-3 w-full h-item"
+              >
+                <div
+                  class="relative"
+                >
+                  <div
+                    class="text-primary bg-gray-300 flex items-center justify-center font-semibold rounded-full my-0 mx-auto w-avatar-sm h-avatar-sm text-lg"
+                    data-testid="avatar"
+                  >
+                    M
+                  </div>
+                  <svg
+                    aria-hidden="true"
+                    class="svg-inline--fa fa-circle absolute text-gray-400 border-xs border-white rounded-full top-6 left-7"
+                    data-icon="circle"
+                    data-prefix="fas"
+                    focusable="false"
+                    role="img"
+                    viewBox="0 0 512 512"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                </div>
+                <div
+                  class="flex flex-col truncate"
+                >
+                  <p>
+                    Mary
+                     
+                  </p>
+                </div>
+              </div>
+            </div>
+          </label>
+        </div>
+        <div
+          class="flex items-center"
+        >
+          <div
+            class="border-b border-gray-300 w-full"
+          />
+          <div
+            class="border-b border-gray-300 w-full"
+          />
+        </div>
+      </div>
+      <div>
+        <div
+          class="pl-3 flex items-center gap-4 w-full"
+          id="e7d1d160-078f-11ef-9ebd-d50e40f719a7"
+        >
+          <input
+            class="w-5 h-5 accent-primary"
+            type="checkbox"
+          />
+          <label
+            class="w-full"
+          >
+            <div
+              class="flex items-center justify-between"
+            >
+              <div
+                class="text-sm px-3 w-20 flex items-center gap-3 w-full h-item"
+              >
+                <div
+                  class="relative"
+                >
+                  <div
+                    class="text-primary bg-gray-300 flex items-center justify-center font-semibold rounded-full my-0 mx-auto w-avatar-sm h-avatar-sm text-lg"
+                    data-testid="avatar"
+                  >
+                    F
+                  </div>
+                  <svg
+                    aria-hidden="true"
+                    class="svg-inline--fa fa-circle absolute text-gray-400 border-xs border-white rounded-full top-6 left-7"
+                    data-icon="circle"
+                    data-prefix="fas"
+                    focusable="false"
+                    role="img"
+                    viewBox="0 0 512 512"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                </div>
+                <div
+                  class="flex flex-col truncate"
+                >
+                  <p>
+                    Faker
+                     
+                  </p>
+                </div>
+              </div>
+            </div>
+          </label>
+        </div>
+        <div
+          class="flex items-center"
+        >
+          <div
+            class="border-b border-gray-300 w-full"
+          />
+          <div
+            class="border-b border-gray-300 w-full"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

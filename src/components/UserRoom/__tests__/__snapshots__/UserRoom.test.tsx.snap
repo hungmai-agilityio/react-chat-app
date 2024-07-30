@@ -1,0 +1,87 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`User room should be render match to snapshot with group 1`] = `
+<div>
+  <a
+    aria-current="page"
+    class="flex justify-between items-center w-full h-16 text-sm hover:bg-second px-3 active"
+    href="/"
+  >
+    <div
+      class="flex items-center gap-3"
+    >
+      <div
+        class="relative"
+      >
+        <div
+          class="text-primary bg-gray-300 flex items-center justify-center font-semibold rounded-full w-avatar-sm h-avatar-sm text-lg"
+          data-testid="avatar"
+        >
+          U
+        </div>
+      </div>
+      <div>
+        <p
+          class="font-semibold text-sm w-36 truncate"
+        >
+          user
+        </p>
+        <p
+          class="w-36 truncate"
+        >
+          Hello
+        </p>
+      </div>
+    </div>
+    <p>
+      01.07.2024
+    </p>
+  </a>
+</div>
+`;
+
+exports[`User room should be render match to snapshot with user 1`] = `
+<div>
+  <a
+    aria-current="page"
+    class="flex justify-between items-center w-full h-16 text-sm hover:bg-second px-3 active"
+    href="/"
+  >
+    <div
+      class="flex items-center gap-3"
+    >
+      <div
+        class="relative"
+      >
+        <div
+          class="text-primary bg-gray-300 flex items-center justify-center font-semibold rounded-full w-avatar-sm h-avatar-sm text-lg"
+          data-testid="avatar"
+        >
+          U
+        </div>
+        <svg
+          aria-hidden="true"
+          class="svg-inline--fa fa-circle absolute text-gray-400 border-xs border-white rounded-full top-6 left-7 text-green-500"
+          data-icon="circle"
+          data-prefix="fas"
+          focusable="false"
+          role="img"
+          viewBox="0 0 512 512"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512z"
+            fill="currentColor"
+          />
+        </svg>
+      </div>
+      <p>
+        user
+      </p>
+    </div>
+    <p>
+      01.07.2024
+    </p>
+  </a>
+</div>
+`;

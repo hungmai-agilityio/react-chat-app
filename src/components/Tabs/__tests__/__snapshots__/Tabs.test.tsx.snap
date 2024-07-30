@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Tabs should be render match to snapshot 1`] = `
+{
+  "container": <div>
+    <div
+      class="w-full border-b-xs border-gray-200 flex items-center"
+    >
+      <button
+        class="text-primary w-full h-14 font-semibold text-base cursor-pointer border-b-2 border-b-primary"
+        value="1"
+      >
+        Option 1
+      </button>
+      <button
+        class="text-primary w-full h-14 font-semibold text-base cursor-pointer"
+        value="2"
+      >
+        Option 2
+      </button>
+      <button
+        class="text-primary w-full h-14 font-semibold text-base cursor-pointer"
+        value="3"
+      >
+        Option 3
+      </button>
+    </div>
+  </div>,
+}
+`;

@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Avatar should render match to snapshot 1`] = `
+<div>
+  <div
+    class="text-primary bg-gray-300 flex items-center justify-center font-semibold w-avatar-sm h-avatar-sm text-lg"
+    data-testid="avatar"
+  >
+    A
+  </div>
+</div>
+`;

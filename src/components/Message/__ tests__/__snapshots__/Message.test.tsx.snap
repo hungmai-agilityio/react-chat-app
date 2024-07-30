@@ -1,0 +1,152 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Message Component should be render match to snapshot Member 1`] = `
+<div>
+  <div
+    class="relative flex mb-5 justify-start"
+  >
+    <div
+      class="flex gap-3 max-w-message"
+    >
+      <div
+        class="relative w-full max-w-avatar"
+      >
+        <div
+          class="text-primary bg-gray-300 flex items-center justify-center font-semibold rounded-full w-avatar-sm h-avatar-sm text-lg"
+          data-testid="avatar"
+        >
+          J
+        </div>
+        <svg
+          aria-hidden="true"
+          class="svg-inline--fa fa-circle absolute text-gray-400 border-xs border-white rounded-full top-6 left-7 text-green-500"
+          data-icon="circle"
+          data-prefix="fas"
+          focusable="false"
+          role="img"
+          viewBox="0 0 512 512"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512z"
+            fill="currentColor"
+          />
+        </svg>
+      </div>
+      <div
+        class="w-full"
+      >
+        <div
+          class="flex items-baseline gap-2"
+        >
+          <p>
+            John Doe
+          </p>
+          <span
+            class="text-xs text-gray-400"
+          >
+            24.04.2024
+          </span>
+        </div>
+        <div
+          class="p-2 text-dark mt-2 group pr-7 max-w-max bg-tertiary rounded-mess-member"
+        >
+          Hello
+           
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Message Component should be render match to snapshot user 1`] = `
+<div>
+  <div
+    class="relative flex mb-5 justify-end"
+  >
+    <div
+      class="flex gap-3 max-w-message flex-row-reverse"
+    >
+      <div
+        class="relative w-full max-w-avatar"
+      >
+        <div
+          class="text-primary bg-gray-300 flex items-center justify-center font-semibold rounded-full w-avatar-sm h-avatar-sm text-lg"
+          data-testid="avatar"
+        >
+          J
+        </div>
+        <svg
+          aria-hidden="true"
+          class="svg-inline--fa fa-circle absolute text-gray-400 border-xs border-white rounded-full top-6 left-7 text-green-500"
+          data-icon="circle"
+          data-prefix="fas"
+          focusable="false"
+          role="img"
+          viewBox="0 0 512 512"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512z"
+            fill="currentColor"
+          />
+        </svg>
+      </div>
+      <div
+        class="w-full"
+      >
+        <div
+          class="flex items-baseline gap-2 justify-end"
+        >
+          <p>
+            John Doe
+          </p>
+          <span
+            class="text-xs text-gray-400"
+          >
+            24.04.2024
+          </span>
+        </div>
+        <div
+          class="p-2 text-dark mt-2 group pr-7 max-w-max bg-second rounded-mess-user float-right"
+        >
+          Hello
+           
+        </div>
+        <div
+          class="absolute top-6 right-7"
+        >
+          <div
+            class="relative"
+          >
+            <div
+              class="flex items-center cursor-pointer px-4"
+            >
+              <div
+                class="flex items-center justify-center cursor-pointer text-gray-400 h-10 w-10 rounded-full"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="svg-inline--fa fa-ellipsis-vertical "
+                  data-icon="ellipsis-vertical"
+                  data-prefix="fas"
+                  focusable="false"
+                  role="img"
+                  viewBox="0 0 128 512"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M64 360a56 56 0 1 0 0 112 56 56 0 1 0 0-112zm0-160a56 56 0 1 0 0 112 56 56 0 1 0 0-112zM120 96A56 56 0 1 0 8 96a56 56 0 1 0 112 0z"
+                    fill="currentColor"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

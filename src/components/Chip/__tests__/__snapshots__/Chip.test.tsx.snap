@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Chip should render match to snapshot 1`] = `
+<div>
+  <div
+    class="max-w-40 text-center truncate py-2 px-4 rounded-3xl shadow-chip font-medium text-md bg-white text-dark cursor-pointer"
+  >
+    June, 04 2024
+  </div>
+</div>
+`;
