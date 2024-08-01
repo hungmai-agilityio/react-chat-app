@@ -44,13 +44,17 @@ const meta: Meta<typeof Input> = {
       description: 'Placeholder when not input value'
     },
     type: {
-      description: 'Type input, default is "text", optional(email, password, date, ...)'
+      description:
+        'Type input, default is "text", optional(email, password, date, ...)'
     },
     value: {
       description: 'Input value'
     },
     onChange: {
       description: 'Handle change input value'
+    },
+    onKeyDown: {
+      description: 'Handle keyboard click events'
     }
   }
 };

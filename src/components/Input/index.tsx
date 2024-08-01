@@ -26,6 +26,9 @@ interface InputProps {
   styles?: string;
   isDisabled?: boolean;
   type?: string;
+  onKeyDown?: (
+    event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
 }
 
 const Input = ({
@@ -41,7 +44,8 @@ const Input = ({
   icon,
   styles,
   isDisabled,
-  type = TYPE.TEXT
+  type = TYPE.TEXT,
+  onKeyDown
 }: InputProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -70,6 +74,7 @@ const Input = ({
             name={name}
             value={value}
             onChange={onChange}
+            onKeyDown={onKeyDown}
             placeholder={placeholder}
             className={clsx(
               'py-1 px-2 focus:h-20',
@@ -86,6 +91,7 @@ const Input = ({
             name={name}
             value={value}
             onChange={onChange}
+            onKeyDown={onKeyDown}
             type={type}
             placeholder={placeholder}
             className={clsx(commonClasses, typeClass, styles)}

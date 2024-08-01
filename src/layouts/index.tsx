@@ -163,11 +163,13 @@ const Layout = () => {
 
   // Handle selected user to open new chat area
   const handleSelectedRoom = useCallback((id: string, isUser: boolean) => {
-    if (isUser) {
-      setSelectedUser(id);
-    } else {
+    if (!isUser) {
       setSelectedRoom(id);
+      setSelectedUser('');
+      return;
     }
+    setSelectedUser(id);
+    setSelectedRoom('');
   }, []);
 
   // Handle toggle new chat modal

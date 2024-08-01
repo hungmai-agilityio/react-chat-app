@@ -181,63 +181,68 @@ const ChatArea = ({ selectedRoom, selectedUser }: ChatProps) => {
   };
 
   // Handle Send message
-  const handleSend = useCallback(
-    async (e: FormEvent<HTMLButtonElement>) => {
-      e.preventDefault();
-      if (!value.trim().length) return;
+  const handleSend = useCallback(async () => {
+    if (!value.trim().length) return;
 
-      let roomId = chatData?.id;
+    let roomId = chatData?.id;
 
-      if (!roomId && selectedUser) {
-        const existingChat = chats!.find(
-          (chat) =>
-            !chat.isGroup &&
-            chat.members.includes(currentUser?.id || '') &&
-            chat.members.includes(selectedUser)
-        );
+    if (!roomId && selectedUser) {
+      const existingChat = chats!.find(
+        (chat) =>
+          !chat.isGroup &&
+          chat.members.includes(currentUser?.id || '') &&
+          chat.members.includes(selectedUser)
+      );
 
-        if (!existingChat) {
-          const newChat: IChat = {
-            id: uuidv4(),
-            title: '',
-            avatar: '',
-            members: [currentUser?.id || '', selectedUser],
-            isGroup: false
-          };
+      if (!existingChat) {
+        const newChat: IChat = {
+          id: uuidv4(),
+          title: '',
+          avatar: '',
+          members: [currentUser?.id || '', selectedUser],
+          isGroup: false
+        };
 
-          const createChatResponse = await createChat(newChat);
-          roomId = createChatResponse.data?.id;
-        }
-
-        if (existingChat) {
-          roomId = existingChat?.id;
-        }
+        const createChatResponse = await createChat(newChat);
+        roomId = createChatResponse.data?.id;
       }
 
-      const newMessage: IMessage = {
-        id: uuidv4(),
-        message: value,
-        sender: currentUser?.id || '',
-        time_stamp: new Date().toString(),
-        roomId: roomId || ''
-      };
+      if (existingChat) {
+        roomId = existingChat?.id;
+      }
+    }
 
-      await sendMessage(newMessage);
+    const newMessage: IMessage = {
+      id: uuidv4(),
+      message: value,
+      sender: currentUser?.id || '',
+      time_stamp: new Date().toString(),
+      roomId: roomId || ''
+    };
 
-      setMessages((prevMessages) => {
-        const messageExists = prevMessages.some(
-          (msg) => msg.id === newMessage.id
-        );
-        if (messageExists) {
-          return prevMessages;
-        }
+    await sendMessage(newMessage);
 
-        return [...prevMessages, newMessage];
-      });
-      setValue('');
-    },
-    [value, currentUser?.id, chatData, selectedUser, chats]
-  );
+    setMessages((prevMessages) => {
+      const messageExists = prevMessages.some(
+        (msg) => msg.id === newMessage.id
+      );
+      if (messageExists) {
+        return prevMessages;
+      }
+
+      return [...prevMessages, newMessage];
+    });
+    setValue('');
+  }, [value, currentUser?.id, chatData, selectedUser, chats]);
+
+  const handleKeyDown = (
+    e: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
 
   // Handle close modal
   const handleToggleInfoModal = useCallback(() => {
@@ -420,13 +425,23 @@ const ChatArea = ({ selectedRoom, selectedUser }: ChatProps) => {
               circle
             />
             <div
-              className="text-center cursor-pointer my-0 mx-auto"
-              onClick={handleToggleInfoModal}
+              className={clsx('text-center my-0 mx-auto', {
+                'cursor-pointer': selectedRoom
+              })}
+              onClick={selectedRoom ? handleToggleInfoModal : undefined}
             >
-              <p className="text-lg font-medium hover:text-primary">
+              <p
+                className={clsx('text-lg font-medium', {
+                  'hover:text-primary': selectedRoom
+                })}
+              >
                 {chatData?.title || user?.userName}
               </p>
-              <span className="text-sm font-normal hover:text-primary">
+              <span
+                className={clsx('text-sm font-normal', {
+                  'hover:text-primary': selectedRoom
+                })}
+              >
                 {chatData?.isGroup ? `${chatData?.members.length} members` : ''}
               </span>
             </div>
@@ -469,6 +484,7 @@ const ChatArea = ({ selectedRoom, selectedUser }: ChatProps) => {
             value={value}
             variant={TYPE.SECOND}
             isDisabled={isChatDisabled}
+            onKeyDown={handleKeyDown}
           />
           {isFocused && (
             <div className="float-right">
