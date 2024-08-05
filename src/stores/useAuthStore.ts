@@ -1,5 +1,5 @@
 import create from 'zustand';
-import { auth, db } from '../../fireBase/config';
+import { auth, db } from '../../firebase/config';
 import {
   doc,
   DocumentData,
@@ -46,7 +46,10 @@ export const useAuthStore = create<AuthState>((set) => ({
         }))[0];
       }
 
-      set({ currentUser: userDocSnap.data(), currentUserProfile: profileData! });
+      set({
+        currentUser: userDocSnap.data(),
+        currentUserProfile: profileData!
+      });
     });
   }
 }));

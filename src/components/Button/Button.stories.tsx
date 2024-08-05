@@ -28,7 +28,7 @@ const meta: Meta<typeof Button> = {
     styles: {
       description: 'Add custom css'
     },
-    isDisabled: {
+    disabled: {
       description: 'Set disabled button'
     },
     iconLeft: {
@@ -86,7 +86,7 @@ export const ButtonDisabled: Story = {
   args: {
     name: 'Send',
     size: SIZE.MINI,
-    isDisabled: true,
+    disabled: true,
     onClick: () => alert('Can not submit')
   }
 };

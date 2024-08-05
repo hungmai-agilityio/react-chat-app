@@ -28,7 +28,7 @@ const meta: Meta<typeof Input> = {
     styles: {
       description: 'Add custom css'
     },
-    isDisabled: {
+    disabled: {
       description: 'Set disabled input'
     },
     icon: {

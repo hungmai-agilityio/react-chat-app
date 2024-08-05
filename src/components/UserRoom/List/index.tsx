@@ -17,7 +17,7 @@ interface ListProps extends UserProps {
   messages?: IMessage[];
 }
 
-export const ListUser = memo(
+const ListUser = memo(
   ({
     data,
     profiles,
@@ -72,9 +72,11 @@ export const ListUser = memo(
           onSelect={onSelected.bind(null, id, isUser)}
           isGroup={!isUser && item.isGroup}
           message={lastMessage?.message}
-          time_stamp={lastMessage?.time_stamp}
+          time_stamp={lastMessage?.time_stamp.toString()}
         />
       );
     });
   }
 );
+
+export default ListUser;

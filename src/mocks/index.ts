@@ -141,7 +141,7 @@ export const mockMessage = {
   id: '43274s-102-11ef-n741820-95h5hts325677j4562',
   message: 'Hello',
   sender: '8a741820-0253-11ef-804b-d90ac4375227',
-  time_stamp: '2024-04-24T15:58:05.791Z',
+  time_stamp: new Date('2024-04-24T15:58:05.791Z'),
   roomId: '97651-07i2-11ef-n741820-95h5hts32543543e2',
   isEdit: false
 };
@@ -150,7 +150,7 @@ export const mockMessageEdit = {
   id: '93274s-29011ef-9ebd-95h5hts3256701h311',
   message: 'Hi',
   sender: '7017234f0-0253-11ef-804b-d90ac4375227',
-  time_stamp: '2024-04-25T15:58:05.791Z',
+  time_stamp: new Date('2024-04-25T15:58:05.791Z'),
   roomId: '97651-07i2-11ef-n741820-95h5hts32543543e2',
   isEdit: true
-}
+};

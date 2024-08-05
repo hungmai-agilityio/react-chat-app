@@ -1,34 +1,22 @@
-import { ChangeEvent, useRef } from 'react';
+import { useRef } from 'react';
 import { clsx } from 'clsx';
+import { InputHTMLAttributes } from 'react';
 
 // Font Awesome
 import { IconDefinition } from '@fortawesome/free-solid-svg-icons';
-
-// Constants
+import Icon from '@/components/Button/Icon';
 import { TYPE } from '@/constants';
 
-// Components
-import Icon from '@/components/Button/Icon';
-
-interface InputProps {
+interface InputProps
+  extends InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement> {
   label?: string;
-  value?: string;
   variant?: TYPE.PRIMARY | TYPE.SECOND | TYPE.TERTIARY;
   htmlFor?: string;
-  placeholder?: string;
-  name?: string;
-  onChange?: (
-    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => void;
-  onClick?: () => void;
   message?: string;
   icon?: IconDefinition;
   styles?: string;
-  isDisabled?: boolean;
   type?: string;
-  onKeyDown?: (
-    event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => void;
+  onClick?: () => void;
 }
 
 const Input = ({
@@ -43,7 +31,7 @@ const Input = ({
   message,
   icon,
   styles,
-  isDisabled,
+  disabled,
   type = TYPE.TEXT,
   onKeyDown
 }: InputProps) => {
@@ -82,7 +70,7 @@ const Input = ({
               typeClass,
               styles
             )}
-            disabled={isDisabled}
+            disabled={disabled}
           />
         ) : (
           <input
@@ -95,7 +83,7 @@ const Input = ({
             type={type}
             placeholder={placeholder}
             className={clsx(commonClasses, typeClass, styles)}
-            disabled={isDisabled}
+            disabled={disabled}
           />
         )}
         {icon && (

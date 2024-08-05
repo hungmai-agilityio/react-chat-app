@@ -6,16 +6,14 @@ import { SIZE, TYPE } from '@/constants';
 // FontAwesome
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { ButtonHTMLAttributes } from 'react';
 
-interface ButtonProps {
-  name: string;
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: SIZE.MINI | SIZE.SMALL | SIZE.MEDIUM | SIZE.LARGE;
   variant?: TYPE.PRIMARY | TYPE.SECOND | TYPE.TERTIARY;
-  onClick: (e: React.FormEvent<HTMLButtonElement>) => void;
-  styles?: string;
-  isDisabled?: boolean;
   iconLeft?: IconDefinition;
   iconRight?: IconDefinition;
+  styles?: string;
 }
 
 const Button = ({
@@ -24,7 +22,7 @@ const Button = ({
   variant,
   onClick,
   styles,
-  isDisabled,
+  disabled,
   iconLeft,
   iconRight
 }: ButtonProps) => {
@@ -48,14 +46,14 @@ const Button = ({
     <button
       className={clsx(
         'font-semibold hover:brightness-90',
-        isDisabled &&
-          'bg-tertiary cursor-not-allowed border hover:filter-none text-stone-500',
+        disabled &&
+          'bg-tertiary cursor-not-allowed border hover:filter-none text-stone-700',
         sizeClass,
         typeClass,
         styles
       )}
       onClick={onClick}
-      disabled={isDisabled}
+      disabled={disabled}
     >
       {iconLeft && <FontAwesomeIcon icon={iconLeft} className="mr-2" />}
       {name}

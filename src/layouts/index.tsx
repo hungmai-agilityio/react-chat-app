@@ -1,6 +1,16 @@
-import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  ChangeEvent,
+  Suspense,
+  lazy,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useNavigate } from 'react-router-dom';
+import { signOut } from 'firebase/auth';
+import { auth } from '../../firebase/config';
 
 // Hooks
 import { useUsersWithProfiles } from '@/hooks';
@@ -13,17 +23,19 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 // Components
-import Sidebar from '@/components/Sidebar';
-import { Tabs } from '@/components/Tabs';
-import { Panel } from '@/components/Tabs/Panel';
-import Search from '@/components/Search';
-import Button from '@/components/Button';
-import UserMenu from '@/components/Dropdown/UserMenu';
-import { ListUser } from '@/components/UserRoom/List';
-import ModalAction from '@/components/Modal/Action';
-import Modal from '@/components/Modal';
-import AddMember from '@/components/Modal/AddMember';
 import { DropdownItem } from '@/components/Dropdown';
+import {
+  AddMember,
+  Button,
+  Loading,
+  Modal,
+  Panel,
+  Search,
+  Tabs,
+  UserMenu,
+  ModalAction
+} from '@/components';
+const ListUser = lazy(() => import('@/components/UserRoom/List'));
 
 // Interfaces
 import { IChat, IMessage, IUser } from '@/interfaces';
@@ -48,9 +60,6 @@ import { useAuthStore, useAppStore } from '@/stores';
 
 // Layouts + Pages
 import ChatArea from '@/layouts/ChatArea';
-import { signOut } from 'firebase/auth';
-import { auth } from '../../fireBase/config';
-import Loading from '@/components/Loading';
 
 const Layout = () => {
   const navigate = useNavigate();
@@ -244,7 +253,7 @@ const Layout = () => {
 
   return (
     <div className="flex w-screen h-screen overflow-hidden">
-      <Sidebar>
+      <aside className="bg-tertiary w-full max-w-sidebar h-screen border-r">
         <Tabs list={LIST_TAB_USERS} index={value} onClick={handleChangeTab} />
         <Panel index={value} tabIndex="1">
           <div className="flex flex-col h-sidebar">
@@ -256,14 +265,18 @@ const Layout = () => {
                   icon={faSearch}
                 />
               </div>
-              <ListUser
-                data={filterChats}
-                profiles={profiles}
-                onSelected={handleSelectedRoom}
-                isActive
-                messages={Object.values(lastMessages)}
-                currentUser={currentUser?.id}
-              />
+              <div className="h-5/6 scrollbar overflow-y-auto">
+                <Suspense fallback={<Loading />}>
+                  <ListUser
+                    data={filterChats}
+                    profiles={profiles}
+                    onSelected={handleSelectedRoom}
+                    isActive
+                    messages={Object.values(lastMessages)}
+                    currentUser={currentUser?.id}
+                  />
+                </Suspense>
+              </div>
             </div>
             <div className="mt-auto p-2">
               <Button
@@ -292,14 +305,18 @@ const Layout = () => {
               icon={faSearch}
             />
           </div>
-          <ListUser
-            data={filterUser}
-            profiles={profiles}
-            onSelected={handleSelectedRoom}
-            currentUser={currentUser?.id}
-          />
+          <div className="h-sidebar-user scrollbar overflow-y-auto">
+            <Suspense fallback={<Loading />}>
+              <ListUser
+                data={filterUser}
+                profiles={profiles}
+                onSelected={handleSelectedRoom}
+                currentUser={currentUser?.id}
+              />
+            </Suspense>
+          </div>
         </Panel>
-      </Sidebar>
+      </aside>
       <ChatArea selectedRoom={selectedRoom} selectedUser={selectedUser} />
       <Modal
         isOpen={isOpenNewModal}

@@ -1,6 +1,13 @@
 // Firebase
-import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
-import { db } from '../../fireBase/config';
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  where
+} from 'firebase/firestore';
+import { db } from '../../firebase/config';
 
 //Constants
 import { END_POINT } from '@/constants';
@@ -44,14 +51,17 @@ export const getProfileByUserId = async (
 ): Promise<ApiResponse<IProfile | null>> => {
   try {
     const profilesCollection = collection(db, END_POINT.PROFILE);
-    const profileQuery = query(profilesCollection, where('user_id', '==', userId));
+    const profileQuery = query(
+      profilesCollection,
+      where('user_id', '==', userId)
+    );
     const docSnap = await getDocs(profileQuery);
 
-    const profile = docSnap.docs.map(doc => {
+    const profile = docSnap.docs.map((doc) => {
       const data = doc.data() as IProfile;
       return {
         ...data,
-        id: doc.id,
+        id: doc.id
       };
     })[0];
 
@@ -72,7 +82,9 @@ export const getProfileByUserId = async (
  * @param {string} userId
  * @returns {Promise<ApiResponse<IUser | null>>}
  */
-export const getUserById = async (userId: string): Promise<ApiResponse<IUser | null>> => {
+export const getUserById = async (
+  userId: string
+): Promise<ApiResponse<IUser | null>> => {
   try {
     const userDocRef = doc(db, END_POINT.USER, userId);
     const userDoc = await getDoc(userDocRef);

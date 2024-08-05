@@ -18,7 +18,7 @@ import { MESSAGE_API } from '@/constants/message';
 import { signIn } from '@/services';
 
 // Components
-import SignIn from '@/components/Form/SignIn';
+import { SignIn } from '@/components';
 
 const SignInPage = () => {
   const [authMessage, setAuthMessage] = useState<string>('');

@@ -21,9 +21,7 @@ import { getUserByEmail, updateUser } from '@/services';
 import { useAuthStore } from '@/stores';
 
 // Components
-import Button from '@/components/Button';
-import Input from '@/components/Input';
-import Upload from '@/components/Upload';
+import { Button, Input, Upload } from '@/components';
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -73,21 +71,22 @@ const Profile = () => {
   };
 
   // Handle Upload image
-  const handleUploadImage = async (
-    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const target = event.target as HTMLInputElement;
-    const files = target.files;
-    const file = files && files[0];
-    if (file) {
-      const base64 = (await convertBase64(file)) as string;
-      setUploadImage(base64);
-      setProfile((prevProfile) => ({
-        ...prevProfile,
-        avatar: base64
-      }));
-    }
-  };
+  const handleUploadImage = useCallback(
+    async (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const target = event.target as HTMLInputElement;
+      const files = target.files;
+      const file = files && files[0];
+      if (file) {
+        const base64 = (await convertBase64(file)) as string;
+        setUploadImage(base64);
+        setProfile((prevProfile) => ({
+          ...prevProfile,
+          avatar: base64
+        }));
+      }
+    },
+    []
+  );
 
   // Handle update user profile
   const handleUpdateProfile = useCallback(async () => {
@@ -186,7 +185,7 @@ const Profile = () => {
               htmlFor="id-code"
               label="ID"
               value={idCode}
-              isDisabled
+              disabled
             />
             <Input
               variant={TYPE.TERTIARY}

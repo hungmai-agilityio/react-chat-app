@@ -1,6 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   ChangeEvent,
   FormEvent,
+  memo,
   useCallback,
   useEffect,
   useMemo,
@@ -9,15 +11,16 @@ import {
 } from 'react';
 import { clsx } from 'clsx';
 import { v4 as uuidv4 } from 'uuid';
+import useSWR from 'swr';
 
 // Constants
-import { INFO_OPTIONS, POSITION, SIZE, TYPE } from '@/constants';
+import { END_POINT, INFO_OPTIONS, POSITION, SIZE, TYPE } from '@/constants';
 
 // Utils
 import { sortMessagesByTimestamp } from '@/utils';
 
 // Hooks
-import { useChats, useOutsideClick, useUsersWithProfiles } from '@/hooks';
+import { useOutsideClick, useUsersWithProfiles } from '@/hooks';
 
 // FontAwesome
 import { faEllipsisVertical, faPen } from '@fortawesome/free-solid-svg-icons';
@@ -34,6 +37,7 @@ import {
   UserLeaveGroup,
   createChat,
   getChatById,
+  getChats,
   getMessagesByRoomId,
   getRoomIdForUsers,
   getUserById,
@@ -45,20 +49,23 @@ import {
 } from '@/services';
 
 // Components
-import Avatar from '@/components/Avatar';
-import Input from '@/components/Input';
-import Button from '@/components/Button';
-import Dropdown, { DropdownItem } from '@/components/Dropdown';
-import Modal from '@/components/Modal';
-import ModalInfo from '@/components/Modal/Info';
-import ModalAction from '@/components/Modal/Action';
-import { GroupedMessages } from '@/components/Message/GroupMessage';
+import {
+  Avatar,
+  Dropdown,
+  DropdownItem,
+  Button,
+  GroupedMessages,
+  Input,
+  Modal,
+  ModalAction,
+  ModalInfo
+} from '@/components';
 
 interface ChatProps {
   selectedRoom?: string;
   selectedUser?: string;
 }
-const ChatArea = ({ selectedRoom, selectedUser }: ChatProps) => {
+const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [value, setValue] = useState<string>('');
   const [messages, setMessages] = useState<IMessage[]>([]);
@@ -78,7 +85,11 @@ const ChatArea = ({ selectedRoom, selectedUser }: ChatProps) => {
   const { currentUser } = useAuthStore();
   const { users, profiles } = useUsersWithProfiles();
   const { chatName, setChatName, chatAvatar, setChatAvatar } = useAppStore();
-  const chats = useChats();
+
+  const { data: chats, error: chatError } = useSWR<IChat[]>(
+    END_POINT.CHAT,
+    getChats
+  );
 
   useEffect(() => {
     let unsubscribe: (() => void) | null = null;
@@ -154,7 +165,6 @@ const ChatArea = ({ selectedRoom, selectedUser }: ChatProps) => {
   });
 
   // Scroll view to bottom (last messages)
-
   useEffect(() => {
     messagesRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -187,7 +197,7 @@ const ChatArea = ({ selectedRoom, selectedUser }: ChatProps) => {
     let roomId = chatData?.id;
 
     if (!roomId && selectedUser) {
-      const existingChat = chats!.find(
+      const existingChat = chats?.find(
         (chat) =>
           !chat.isGroup &&
           chat.members.includes(currentUser?.id || '') &&
@@ -216,7 +226,7 @@ const ChatArea = ({ selectedRoom, selectedUser }: ChatProps) => {
       id: uuidv4(),
       message: value,
       sender: currentUser?.id || '',
-      time_stamp: new Date().toString(),
+      time_stamp: new Date(),
       roomId: roomId || ''
     };
 
@@ -226,9 +236,7 @@ const ChatArea = ({ selectedRoom, selectedUser }: ChatProps) => {
       const messageExists = prevMessages.some(
         (msg) => msg.id === newMessage.id
       );
-      if (messageExists) {
-        return prevMessages;
-      }
+      if (messageExists) return prevMessages;
 
       return [...prevMessages, newMessage];
     });
@@ -414,6 +422,10 @@ const ChatArea = ({ selectedRoom, selectedUser }: ChatProps) => {
     setEditingMessage(null);
   }, [editingMessage]);
 
+  if (chatError) {
+    return <p>Get chats data error!!!</p>;
+  }
+
   return (
     <div className="w-screen h-screen flex flex-col bg-white">
       <div className="flex h-14 py-2 px-4 border-b-xs">
@@ -483,7 +495,7 @@ const ChatArea = ({ selectedRoom, selectedUser }: ChatProps) => {
             name="message"
             value={value}
             variant={TYPE.SECOND}
-            isDisabled={isChatDisabled}
+            disabled={isChatDisabled}
             onKeyDown={handleKeyDown}
           />
           {isFocused && (
@@ -499,7 +511,7 @@ const ChatArea = ({ selectedRoom, selectedUser }: ChatProps) => {
                 <Button
                   name={isEdit ? 'Update' : 'Send'}
                   onClick={isEdit ? handleUpdateMessage : handleSend}
-                  isDisabled={value.length === 0 || isChatDisabled}
+                  disabled={value.length === 0 || isChatDisabled}
                   size={SIZE.MINI}
                 />
               </div>
@@ -569,6 +581,5 @@ const ChatArea = ({ selectedRoom, selectedUser }: ChatProps) => {
       </Modal>
     </div>
   );
-};
-
+});
 export default ChatArea;

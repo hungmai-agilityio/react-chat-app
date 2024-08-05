@@ -88,7 +88,7 @@ export const Message = memo(
             >
               <p>{name}</p>
               <span className="text-xs text-gray-400">
-                {timeStampConversion(item.time_stamp)}
+                {timeStampConversion(item.time_stamp.toString())}
               </span>
             </div>
 

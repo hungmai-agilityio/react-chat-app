@@ -5,7 +5,7 @@ import { useCallback } from 'react';
 import { SIZE, TYPE, URL } from '@/constants';
 
 // Components
-import Button from '@/components/Button';
+import { Button } from '@/components';
 
 const NotFound = () => {
   const navigate = useNavigate();

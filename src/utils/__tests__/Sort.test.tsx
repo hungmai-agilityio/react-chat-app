@@ -8,21 +8,21 @@ describe('sortMessagesByTimestamp', () => {
         id: '1',
         message: 'Hello',
         sender: 'user1',
-        time_stamp: '2024-07-21T12:00:00Z',
+        time_stamp: new Date('2024-07-21T12:00:00Z'),
         roomId: 'room1'
       },
       {
         id: '2',
         message: 'World',
         sender: 'user2',
-        time_stamp: '2024-07-21T10:00:00Z',
+        time_stamp: new Date('2024-07-21T10:00:00Z'),
         roomId: 'room1'
       },
       {
         id: '3',
         message: 'Test',
         sender: 'user3',
-        time_stamp: '2024-07-21T11:00:00Z',
+        time_stamp: new Date('2024-07-21T11:00:00Z'),
         roomId: 'room1'
       }
     ];
@@ -34,21 +34,21 @@ describe('sortMessagesByTimestamp', () => {
         id: '2',
         message: 'World',
         sender: 'user2',
-        time_stamp: '2024-07-21T10:00:00Z',
+        time_stamp: new Date('2024-07-21T10:00:00Z'),
         roomId: 'room1'
       },
       {
         id: '3',
         message: 'Test',
         sender: 'user3',
-        time_stamp: '2024-07-21T11:00:00Z',
+        time_stamp: new Date('2024-07-21T11:00:00Z'),
         roomId: 'room1'
       },
       {
         id: '1',
         message: 'Hello',
         sender: 'user1',
-        time_stamp: '2024-07-21T12:00:00Z',
+        time_stamp: new Date('2024-07-21T12:00:00Z'),
         roomId: 'room1'
       }
     ]);

@@ -41,7 +41,8 @@ export default {
         item: '60px',
         'form-md': '600px',
         'form-xl': '930px',
-        sidebar: 'calc(100vh - 60px)' // 100vh - Tab
+        sidebar: 'calc(100vh - 60px)', // 100vh - Tab
+        'sidebar-user': 'calc(100vh - 130px)'
       },
 
       maxWidth: {
@@ -74,7 +75,7 @@ export default {
       },
 
       backgroundImage: {
-        auth: 'url("/assets/images/bg-auth.jpg")'
+        auth: 'url("assets/images/bg-auth.jpg")'
       },
 
       keyframes: {

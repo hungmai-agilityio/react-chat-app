@@ -59,7 +59,7 @@ describe('Button Component', () => {
         onClick={onClickMock}
         size={SIZE.MEDIUM}
         variant={TYPE.SECOND}
-        isDisabled
+        disabled
       />
     );
 

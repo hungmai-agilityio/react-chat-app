@@ -94,7 +94,7 @@ const ModalAction = ({
             iconRight={icon}
             variant={TYPE.PRIMARY}
             size={SIZE.MEDIUM}
-            isDisabled={!name?.trim()}
+            disabled={!name?.trim()}
           />
         </div>
       )}

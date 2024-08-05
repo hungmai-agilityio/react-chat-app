@@ -2,7 +2,7 @@ export interface IMessage {
   id: string;
   message: string;
   sender: string;
-  time_stamp: string;
+  time_stamp: Date;
   roomId: string;
   isEdit?: boolean;
 }

@@ -46,7 +46,7 @@ exports[`Modal Action should render match to snapshot - Button click 1`] = `
       class="absolute top-lg right-xs"
     >
       <button
-        class="font-semibold hover:brightness-90 bg-tertiary cursor-not-allowed border hover:filter-none text-stone-500 w-40 h-9 bg-primary text-white"
+        class="font-semibold hover:brightness-90 bg-tertiary cursor-not-allowed border hover:filter-none text-stone-700 w-40 h-9 bg-primary text-white"
         disabled=""
       >
         Save

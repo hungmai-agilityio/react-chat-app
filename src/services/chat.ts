@@ -12,13 +12,25 @@ import {
   updateDoc,
   where
 } from 'firebase/firestore';
-import { db } from '../../fireBase/config';
+import { db } from '../../firebase/config';
 
 // Interfaces
 import { ApiResponse, IChat, IMessage } from '@/interfaces';
 
 // Constants
 import { END_POINT } from '@/constants';
+
+/** Get all chats
+ * @returns {Promise<IChat[]>}
+ */
+export const getChats = async (): Promise<IChat[]> => {
+  const chatsCollection = collection(db, END_POINT.CHAT);
+  const querySnapshot = await getDocs(chatsCollection);
+  return querySnapshot.docs.map((doc) => ({
+    ...doc.data(),
+    id: doc.id
+  })) as IChat[];
+};
 
 /** Get all chats by user ID
  * @param {string} userId
@@ -271,7 +283,8 @@ export const getMessagesByRoomId = (
 
   const unsubscribe = onSnapshot(queryData, (snapshot) => {
     const messages: IMessage[] = snapshot.docs.map((doc) => ({
-      ...(doc.data() as IMessage)
+      ...(doc.data() as IMessage),
+      time_stamp: doc.data().time_stamp.toDate()
     }));
     callback(messages);
   });
@@ -304,7 +317,10 @@ export const getLastMessagesByRoomId = (
     return onSnapshot(queryData, (snapshot) => {
       if (!snapshot.empty) {
         const doc = snapshot.docs[0];
-        const message = doc.data() as IMessage;
+        const message = {
+          ...(doc.data() as IMessage),
+          time_stamp: doc.data().time_stamp.toDate()
+        };
         setLastMessages((prevMessages) => ({
           ...prevMessages,
           [roomId]: message
@@ -314,9 +330,7 @@ export const getLastMessagesByRoomId = (
   });
 
   return () => {
-    unsubscribe.map((unsub) => {
-      unsub();
-    });
+    unsubscribe.forEach((unsub) => unsub());
   };
 };
 

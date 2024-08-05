@@ -1,4 +1,4 @@
-import { ChangeEvent } from 'react';
+import { ChangeEvent, memo } from 'react';
 
 // FontAwesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -20,7 +20,7 @@ interface UploadProps {
   ) => void;
 }
 
-const Upload = ({ htmlFor, avatar, name, onImageChange }: UploadProps) => {
+const Upload = memo(({ htmlFor, avatar, name, onImageChange }: UploadProps) => {
   return (
     <div className="relative">
       <Avatar avatar={avatar} name={name} size={SIZE.LARGE} circle />
@@ -41,6 +41,6 @@ const Upload = ({ htmlFor, avatar, name, onImageChange }: UploadProps) => {
       </label>
     </div>
   );
-};
+});
 
 export default Upload;

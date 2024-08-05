@@ -6,7 +6,7 @@ import {
   updateDoc
 } from 'firebase/firestore';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { db } from '../../../fireBase/config';
+import { db } from '../../../firebase/config';
 
 // Services
 import {

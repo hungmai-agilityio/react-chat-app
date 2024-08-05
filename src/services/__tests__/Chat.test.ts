@@ -9,7 +9,7 @@ import {
   deleteDoc,
   onSnapshot
 } from 'firebase/firestore';
-import { db } from '../../../fireBase/config';
+import { db } from '../../../firebase/config';
 
 // Constants
 import { END_POINT } from '@/constants';
@@ -55,7 +55,7 @@ describe('Chat Services', () => {
     roomId: chat.id,
     sender: userId,
     message: 'Hello',
-    time_stamp: '2020-10-01T15:37:01.791Z',
+    time_stamp: new Date('2020-10-01T15:37:01.791Z'),
     isEdit: false
   };
   const messages: IMessage[] = [message];
@@ -235,11 +235,22 @@ describe('Chat Services', () => {
     it('should get messages by room ID successfully', () => {
       const callback = jest.fn();
 
+      const mockTimestamp = {
+        toDate: () => new Date('2020-10-01T15:37:01.791Z')
+      };
+
       (collection as jest.Mock).mockReturnValue({});
       (query as jest.Mock).mockReturnValue({});
       (onSnapshot as jest.Mock).mockImplementation((_, callback) => {
-        callback({ docs: messages.map((msg) => ({ data: () => msg })) });
-        return () => {};
+        callback({
+          docs: messages.map((msg) => ({
+            data: () => ({
+              ...msg,
+              time_stamp: mockTimestamp
+            })
+          }))
+        });
+        return () => { };
       });
 
       const unsubscribe = getMessagesByRoomId(chat.id, callback);
@@ -256,8 +267,8 @@ describe('Chat Services', () => {
       id: '21b06a53-63b1-4733-9036-aa4e7e88f944',
       roomId: '21b06a53-63b1-4733-9036-aa4e7e88f944',
       message: 'Hello',
-      time_stamp: '2024-10-01T15:37:01.791Z',
-      sender: 'userId'
+      time_stamp: new Date('2024-10-01T15:37:01.791Z'),
+      sender: '8a741820-0253-11ef-804b-d90ac4375227'
     };
 
     it('should set last messages correctly', () => {
@@ -267,7 +278,16 @@ describe('Chat Services', () => {
       (onSnapshot as jest.Mock).mockImplementation((_, callback) => {
         callback({
           empty: false,
-          docs: [{ data: () => mockMessage }] as any
+          docs: [
+            {
+              data: () => ({
+                ...mockMessage,
+                time_stamp: {
+                  toDate: () => mockMessage.time_stamp
+                }
+              })
+            }
+          ]
         });
         return unsubscribe;
       });
@@ -276,7 +296,7 @@ describe('Chat Services', () => {
 
       expect(onSnapshot).toHaveBeenCalled();
       expect(setLastMessages).toHaveBeenCalledWith(expect.any(Function));
-      const updateFunction = setLastMessages.mock.calls[0][0] as Function;
+      const updateFunction = setLastMessages.mock.calls[0][0];
       expect(updateFunction({})).toEqual({
         [roomIds[0]]: mockMessage
       });

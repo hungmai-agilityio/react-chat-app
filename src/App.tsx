@@ -3,7 +3,7 @@ import { Route, Routes, useNavigate } from 'react-router-dom';
 import { onAuthStateChanged, User } from 'firebase/auth';
 
 // Firebases
-import { auth } from '../fireBase/config';
+import { auth } from '../firebase/config';
 
 // Constants
 import { URL } from '@/constants';
@@ -12,13 +12,13 @@ import { URL } from '@/constants';
 import Layout from '@/layouts';
 
 // Components
-import Loading from '@/components/Loading';
+import { ErrorBoundary, Loading } from '@/components';
 
 // Pages
-import Profile from '@/Pages/Profile';
-import SignUpPage from '@/Pages/SignUp';
-import SignInPage from '@/Pages/SignIn';
-import NotFound from '@/Pages/NotFound';
+import Profile from '@/pages/Profile';
+import SignUpPage from '@/pages/SignUp';
+import SignInPage from '@/pages/SignIn';
+import NotFound from '@/pages/NotFound';
 
 const App = () => {
   const navigate = useNavigate();
@@ -45,17 +45,19 @@ const App = () => {
   }
 
   return (
-    <div className="font-roboto">
-      <Routes>
-        <Route path={HOME} element={<Layout />}>
-          <Route path="chat/:id" element={<Layout />} />
-        </Route>
-        <Route path={PROFILE} element={<Profile />} />
-        <Route path={SIGN_IN} element={<SignInPage />} />
-        <Route path={SIGN_UP} element={<SignUpPage />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </div>
+    <ErrorBoundary>
+      <div className="font-roboto">
+        <Routes>
+          <Route path={HOME} element={<Layout />}>
+            <Route path="chat/:id" element={<Layout />} />
+          </Route>
+          <Route path={PROFILE} element={<Profile />} />
+          <Route path={SIGN_IN} element={<SignInPage />} />
+          <Route path={SIGN_UP} element={<SignUpPage />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </div>
+    </ErrorBoundary>
   );
 };
 
