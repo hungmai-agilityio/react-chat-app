@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 // Firebases
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../../firebase/config';
+import { auth } from '../../../fireBase/config';
 // Interfaces
 import { IUser, IProfile } from '@/interfaces';
 

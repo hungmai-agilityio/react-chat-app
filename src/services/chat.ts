@@ -12,7 +12,7 @@ import {
   updateDoc,
   where
 } from 'firebase/firestore';
-import { db } from '../../firebase/config';
+import { db } from '../../fireBase/config';
 
 // Interfaces
 import { ApiResponse, IChat, IMessage } from '@/interfaces';

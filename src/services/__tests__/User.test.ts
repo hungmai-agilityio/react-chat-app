@@ -6,7 +6,7 @@ import {
   query,
   where
 } from 'firebase/firestore';
-import { db } from '../../../firebase/config';
+import { db } from '../../../fireBase/config';
 
 // Services
 import { getUsers, getProfileByUserId, getUserById } from '@/services';

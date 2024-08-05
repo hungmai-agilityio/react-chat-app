@@ -8,7 +8,7 @@ import {
   where,
   updateDoc
 } from 'firebase/firestore';
-import { auth, db } from '../../firebase/config';
+import { auth, db } from '../../fireBase/config';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 
 // Interfaces

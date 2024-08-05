@@ -9,7 +9,7 @@ import {
   deleteDoc,
   onSnapshot
 } from 'firebase/firestore';
-import { db } from '../../../firebase/config';
+import { db } from '../../../fireBase/config';
 
 // Constants
 import { END_POINT } from '@/constants';

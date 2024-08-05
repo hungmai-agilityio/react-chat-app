@@ -1,5 +1,5 @@
 import create from 'zustand';
-import { auth, db } from '../../firebase/config';
+import { auth, db } from '../../fireBase/config';
 import {
   doc,
   DocumentData,

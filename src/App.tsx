@@ -3,7 +3,7 @@ import { Route, Routes, useNavigate } from 'react-router-dom';
 import { onAuthStateChanged, User } from 'firebase/auth';
 
 // Firebases
-import { auth } from '../firebase/config';
+import { auth } from '../fireBase/config';
 
 // Constants
 import { URL } from '@/constants';
@@ -15,10 +15,10 @@ import Layout from '@/layouts';
 import { ErrorBoundary, Loading } from '@/components';
 
 // Pages
-import Profile from '@/pages/Profile';
-import SignUpPage from '@/pages/SignUp';
-import SignInPage from '@/pages/SignIn';
-import NotFound from '@/pages/NotFound';
+import Profile from '@/Pages/Profile';
+import SignUpPage from '@/Pages/SignUp';
+import SignInPage from '@/Pages/SignIn';
+import NotFound from '@/Pages/NotFound';
 
 const App = () => {
   const navigate = useNavigate();
