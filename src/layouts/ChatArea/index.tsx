@@ -261,6 +261,8 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
   const handleToggleEditModal = useCallback(() => {
     setIsOpenEditModal(!isOpenEditModal);
     setIsOpenInfoModal(!isOpenInfoModal);
+    setChatData(chatData);
+    setChatName('');
   }, [isOpenEditModal, isOpenInfoModal]);
 
   // Handle selected dropdown option
@@ -280,7 +282,15 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
   const handleChatNameChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setChatName(event.target.value);
+    const value = event.target.value;
+    setChatName(value);
+
+    // setChatData((prevData) => {
+    //   if (prevData) {
+    //     return { ...prevData, title: value };
+    //   }
+    //   return null;
+    // });
   };
 
   // Handle set avatar for chat room
@@ -298,6 +308,13 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
 
     await updateChatInfo(chatData!.id, data);
     handleToggleEditModal();
+
+    setChatData((prevData) => {
+      if (prevData) {
+        return { ...prevData, title: chatName };
+      }
+      return null;
+    });
   }, [chatAvatar, chatData, chatName]);
 
   /**
