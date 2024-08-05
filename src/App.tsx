@@ -34,11 +34,16 @@ const App = () => {
       const isAuthPath = [SIGN_IN, SIGN_UP].includes(window.location.pathname);
       if (!user && !isAuthPath) {
         navigate(SIGN_IN);
+        return;
+      }
+
+      if (user && isAuthPath) {
+        navigate(HOME);
       }
     });
 
     return () => unsubscribe();
-  }, [navigate, SIGN_IN, SIGN_UP]);
+  }, [navigate, SIGN_IN, SIGN_UP, HOME]);
 
   if (loading) {
     return <Loading />;
