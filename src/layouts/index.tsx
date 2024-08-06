@@ -8,7 +8,6 @@ import {
   useState
 } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { useNavigate } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 import { auth } from '../../fireBase/config';
 
@@ -33,7 +32,8 @@ import {
   Search,
   Tabs,
   UserMenu,
-  ModalAction
+  ModalAction,
+  Profile
 } from '@/components';
 const ListUser = lazy(() => import('@/components/UserRoom/List'));
 
@@ -53,7 +53,7 @@ import { searchFilter } from '@/utils';
 import { debounce } from '@/utils';
 
 // Constants
-import { LIST_TAB_USERS, POSITION, SIZE, TYPE, URL } from '@/constants';
+import { LIST_TAB_USERS, POSITION, SIZE, TYPE } from '@/constants';
 
 // Stores
 import { useAuthStore, useAppStore } from '@/stores';
@@ -62,8 +62,6 @@ import { useAuthStore, useAppStore } from '@/stores';
 import ChatArea from '@/layouts/ChatArea';
 
 const Layout = () => {
-  const navigate = useNavigate();
-
   const [value, setValue] = useState<string>('1');
   const [searchValue, setSearchValue] = useState<string>('');
   const [debouncedSearch, setDebouncedSearch] = useState<string>('');
@@ -71,6 +69,7 @@ const Layout = () => {
   const [selectedUser, setSelectedUser] = useState<string>('');
   const [isOpenNewModal, setIsOpenNewModal] = useState<boolean>(false);
   const [isOpenMemberModal, setIsOpenMemberModal] = useState<boolean>(false);
+  const [isOpenProfile, setIsOpenProfile] = useState<boolean>(false);
   const [chats, setChats] = useState<IChat[]>([]);
   const [lastMessages, setLastMessages] = useState<Record<string, IMessage>>(
     {}
@@ -201,6 +200,11 @@ const Layout = () => {
     addCheckedUser(id);
   };
 
+  // Handle Close modal edit profile
+  const handleToggleProfile = useCallback(() => {
+    setIsOpenProfile(!isOpenProfile);
+  }, [isOpenProfile]);
+
   // Handle change title chat room
   const handleChatNameChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -236,7 +240,7 @@ const Layout = () => {
   const handleSelect = (item: DropdownItem) => {
     switch (item.value) {
       case 'profile':
-        navigate(`${URL.PROFILE}`);
+        handleToggleProfile();
         break;
       case 'logout':
         signOut(auth);
@@ -348,6 +352,14 @@ const Layout = () => {
           users={users}
           profiles={profiles}
         />
+      </Modal>
+      <Modal
+        isOpen={isOpenProfile}
+        onCloseModal={handleToggleProfile}
+        styles="w-modal-xl"
+        title="Profile"
+      >
+        <Profile />
       </Modal>
     </div>
   );
