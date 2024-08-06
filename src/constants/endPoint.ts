@@ -1,6 +1,5 @@
 export const URL = {
   HOME: '',
-  PROFILE: '/profile',
   SIGN_IN: '/sign-in',
   SIGN_UP: '/sign-up'
 }

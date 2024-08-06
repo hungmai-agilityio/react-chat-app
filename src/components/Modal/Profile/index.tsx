@@ -1,12 +1,8 @@
-import { ChangeEvent, useCallback, useEffect, useState } from 'react';
+import { ChangeEvent, memo, useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // Constants
 import { MESSAGE_API, MESSAGE_VALID, SIZE, TYPE } from '@/constants';
-
-// Font Awesome
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 // Utils
 import { convertBase64, validateForm } from '@/utils';
@@ -23,7 +19,7 @@ import { useAuthStore } from '@/stores';
 // Components
 import { Button, Input, Upload } from '@/components';
 
-const Profile = () => {
+const Profile = memo(() => {
   const navigate = useNavigate();
   const { currentUser, currentUserProfile, fetchUserData } = useAuthStore();
 
@@ -49,8 +45,6 @@ const Profile = () => {
     phone: currentUser?.phone || ''
   });
 
-  // Stores
-
   // Fetch user data if currentUser is not available
   useEffect(() => {
     if (!currentUser) {
@@ -64,11 +58,6 @@ const Profile = () => {
       setProfile(currentUserProfile as IProfile);
     }
   }, [navigate, currentUserProfile, currentUser, fetchUserData]);
-
-  // Handle returns to the previous page
-  const handleBackToResult = () => {
-    navigate(-1);
-  };
 
   // Handle Upload image
   const handleUploadImage = useCallback(
@@ -91,8 +80,7 @@ const Profile = () => {
   // Handle update user profile
   const handleUpdateProfile = useCallback(async () => {
     const data = {
-      name: user.userName,
-      email: user.email
+      name: user.userName
     };
 
     // Validate user data
@@ -112,7 +100,6 @@ const Profile = () => {
     const userData = {
       ...user,
       userName: user.userName,
-      email: user.email,
       updated_at: new Date()
     };
 
@@ -121,6 +108,7 @@ const Profile = () => {
       phone: profile.phone
     };
 
+    // Update user document
     const accountResponse = await updateUser('users', user.id, userData);
     const profileResponse = await updateUser(
       'profiles',
@@ -132,7 +120,6 @@ const Profile = () => {
       setAuthMessage(MESSAGE_API.UPDATE_PROFILE_ERROR);
       return;
     }
-    setAuthMessage(MESSAGE_API.UPDATE_PROFILE_SUCCESS);
   }, [profile, uploadImage, user]);
 
   // Handle change user value
@@ -160,70 +147,59 @@ const Profile = () => {
   const idCode = user?.id.split('-').join('');
 
   return (
-    <div className="h-screen bg-slate-300 bg-no-repeat bg-cover overflow-hidden text-dark">
-      <div className="mt-40 w-5/12 m-auto bg-white p-8 rounded-2xl">
-        <p
-          className="cursor-pointer hover:text-primary w-max"
-          onClick={handleBackToResult}
-        >
-          <FontAwesomeIcon icon={faArrowLeft} className="mr-2" /> Return to
-          result
-        </p>
-        <p className="mt-11 text-normal text-md font-bold">Account Setting</p>
-        <div className="flex gap-20 item-center mt-4">
-          <div className="w-2/4 mt-4 ">
-            <Upload
-              avatar={uploadImage || profile.avatar}
-              name={user?.userName}
-              htmlFor="upload-profile"
-              onImageChange={handleUploadImage}
-            />
-          </div>
-          <div className="w-full">
-            <Input
-              variant={TYPE.TERTIARY}
-              htmlFor="id-code"
-              label="ID"
-              value={idCode}
-              disabled
-            />
-            <Input
-              variant={TYPE.TERTIARY}
-              htmlFor="fullName"
-              label="Full Name"
-              value={user?.userName}
-              message={errorMessage?.name}
-              onChange={handleUserChange('userName')}
-            />
-            <Input
-              variant={TYPE.TERTIARY}
-              htmlFor="email"
-              label="Email"
-              value={user?.email}
-              message={errorMessage?.email}
-              onChange={handleUserChange('email')}
-            />
-            <Input
-              variant={TYPE.TERTIARY}
-              htmlFor="phoneNumber"
-              label="Phone Number"
-              value={profile?.phone}
-              onChange={handleProfileChange('phone')}
-            />
-          </div>
-        </div>
-        <div className="mt-5">
-          <Button
-            name="Update Profile"
-            variant={TYPE.PRIMARY}
-            size={SIZE.MEDIUM}
-            onClick={handleUpdateProfile}
+    <div className=" p-8 rounded-2xl">
+      <div className="flex gap-20 item-center mt-4">
+        <div className="w-2/4 mt-4 ">
+          <Upload
+            avatar={uploadImage || profile.avatar}
+            name={user?.userName}
+            htmlFor="upload-profile"
+            onImageChange={handleUploadImage}
           />
         </div>
-        <p className="text-lg mt-5 text-center">{authMessage}</p>
+        <div className="w-full">
+          <Input
+            variant={TYPE.TERTIARY}
+            htmlFor="id-code"
+            label="ID"
+            value={idCode}
+            disabled
+          />
+          <Input
+            variant={TYPE.TERTIARY}
+            htmlFor="fullName"
+            label="Full Name"
+            value={user?.userName}
+            message={errorMessage?.name}
+            onChange={handleUserChange('userName')}
+          />
+          <Input
+            variant={TYPE.TERTIARY}
+            htmlFor="email"
+            label="Email"
+            value={user?.email}
+            disabled
+          />
+          <Input
+            variant={TYPE.TERTIARY}
+            htmlFor="phoneNumber"
+            label="Phone Number"
+            value={profile?.phone}
+            onChange={handleProfileChange('phone')}
+          />
+        </div>
       </div>
+      <div className="mt-5">
+        <Button
+          name="Update Profile"
+          variant={TYPE.PRIMARY}
+          size={SIZE.MEDIUM}
+          onClick={handleUpdateProfile}
+        />
+      </div>
+      <p className="text-lg mt-5 text-center">{authMessage}</p>
     </div>
   );
-};
+});
 
 export default Profile;

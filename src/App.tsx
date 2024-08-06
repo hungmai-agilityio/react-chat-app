@@ -15,14 +15,13 @@ import Layout from '@/layouts';
 import { ErrorBoundary, Loading } from '@/components';
 
 // Pages
-import Profile from '@/Pages/Profile';
 import SignUpPage from '@/Pages/SignUp';
 import SignInPage from '@/Pages/SignIn';
 import NotFound from '@/Pages/NotFound';
 
 const App = () => {
   const navigate = useNavigate();
-  const { HOME, PROFILE, SIGN_IN, SIGN_UP } = URL;
+  const { HOME, SIGN_IN, SIGN_UP } = URL;
 
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -56,7 +55,6 @@ const App = () => {
           <Route path={HOME} element={<Layout />}>
             <Route path="chat/:id" element={<Layout />} />
           </Route>
-          <Route path={PROFILE} element={<Profile />} />
           <Route path={SIGN_IN} element={<SignInPage />} />
           <Route path={SIGN_UP} element={<SignUpPage />} />
           <Route path="*" element={<NotFound />} />

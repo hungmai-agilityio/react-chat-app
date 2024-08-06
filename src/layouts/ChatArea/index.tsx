@@ -58,7 +58,8 @@ import {
   Input,
   Modal,
   ModalAction,
-  ModalInfo
+  ModalInfo,
+  Spinner
 } from '@/components';
 
 interface ChatProps {
@@ -77,6 +78,7 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
   const [editingMessage, setEditingMessage] = useState<string | null>(null);
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [isChatDisabled, setIsChatDisabled] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const inputRef = useRef<HTMLDivElement>(null);
   const messagesRef = useRef<HTMLDivElement>(null);
@@ -96,6 +98,7 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
 
     if (selectedRoom) {
       setIsChatDisabled(false);
+      setIsLoading(true);
 
       (async () => {
         const chat = await getChatById(selectedRoom);
@@ -114,6 +117,8 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
           const sortedNewMessages = sortMessagesByTimestamp(newMessages);
           setMessages(sortedNewMessages);
         });
+
+        setIsLoading(false);
       })();
     }
 
@@ -128,6 +133,7 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
 
     if (selectedUser) {
       setIsChatDisabled(false);
+      setIsLoading(true);
 
       (async () => {
         const userData = await getUserById(selectedUser);
@@ -147,6 +153,7 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
             setMessages(sortedNewMessages);
           });
         }
+        setIsLoading(false);
       })();
     }
 
@@ -285,12 +292,12 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
     const value = event.target.value;
     setChatName(value);
 
-    // setChatData((prevData) => {
-    //   if (prevData) {
-    //     return { ...prevData, title: value };
-    //   }
-    //   return null;
-    // });
+    setChatData((prevData) => {
+      if (prevData) {
+        return { ...prevData, title: value };
+      }
+      return null;
+    });
   };
 
   // Handle set avatar for chat room
@@ -491,50 +498,58 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
           'opacity-50 cursor-not-allowed bg-fog': isChatDisabled
         })}
       >
-        <div className="flex-grow border-b border-gray-300 overflow-y-auto scrollbar w-full p-4 space-y-4">
-          <GroupedMessages
-            currentUser={currentUser?.id}
-            messages={messages}
-            userProfiles={userProfiles}
-            onEdit={handleEditMessage}
-            onDelete={handleOpenModalRemove}
-          />
-          <div ref={messagesRef}></div>
-        </div>
-        <div
-          ref={inputRef}
-          onFocus={handleFocus}
-          className={clsx('relative p-2 transition-all')}
-        >
-          <Input
-            htmlFor="message-value"
-            onChange={handleChange}
-            name="message"
-            value={value}
-            variant={TYPE.SECOND}
-            disabled={isChatDisabled}
-            onKeyDown={handleKeyDown}
-          />
-          {isFocused && (
-            <div className="float-right">
-              <div className="flex gap-5">
-                {isEdit && (
-                  <Button
-                    name="Cancel"
-                    onClick={handleCancelEdit}
-                    size={SIZE.MINI}
-                  />
-                )}
-                <Button
-                  name={isEdit ? 'Update' : 'Send'}
-                  onClick={isEdit ? handleUpdateMessage : handleSend}
-                  disabled={value.length === 0 || isChatDisabled}
-                  size={SIZE.MINI}
-                />
-              </div>
+        {isLoading ? (
+          <div className="flex justify-center items-center w-full h-full">
+            <Spinner />
+          </div>
+        ) : (
+          <>
+            <div className="flex-grow border-b border-gray-300 overflow-y-auto scrollbar w-full p-4 space-y-4">
+              <GroupedMessages
+                currentUser={currentUser?.id}
+                messages={messages}
+                userProfiles={userProfiles}
+                onEdit={handleEditMessage}
+                onDelete={handleOpenModalRemove}
+              />
+              <div ref={messagesRef}></div>
             </div>
-          )}
-        </div>
+            <div
+              ref={inputRef}
+              onFocus={handleFocus}
+              className={clsx('relative p-2 transition-all')}
+            >
+              <Input
+                htmlFor="message-value"
+                onChange={handleChange}
+                name="message"
+                value={value}
+                variant={TYPE.SECOND}
+                disabled={isChatDisabled}
+                onKeyDown={handleKeyDown}
+              />
+              {isFocused && (
+                <div className="float-right">
+                  <div className="flex gap-5">
+                    {isEdit && (
+                      <Button
+                        name="Cancel"
+                        onClick={handleCancelEdit}
+                        size={SIZE.MINI}
+                      />
+                    )}
+                    <Button
+                      name={isEdit ? 'Update' : 'Send'}
+                      onClick={isEdit ? handleUpdateMessage : handleSend}
+                      disabled={value.length === 0 || isChatDisabled}
+                      size={SIZE.MINI}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          </>
+        )}
       </main>
       <Modal
         isOpen={isOpenInfoModal}

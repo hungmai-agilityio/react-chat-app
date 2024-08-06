@@ -10,10 +10,13 @@ export { default as SignIn } from '@/components/Form/SignIn';
 export { default as SignUp } from '@/components/Form/SignUp';
 export { default as Input } from '@/components/Input';
 export { default as Loading } from '@/components/Loading';
+export { default as Spinner } from '@/components/Loading/Spinner';
+
 export { default as Modal } from '@/components/Modal';
 export { default as ModalAction } from '@/components/Modal/Action';
 export { default as AddMember } from '@/components/Modal/AddMember';
 export { default as ModalInfo } from '@/components/Modal/Info';
+export { default as Profile } from '@/components/Modal/Profile';
 export { default as Search } from '@/components/Search';
 export { default as Upload } from '@/components/Upload';
 export { default as ListUser } from '@/components/UserRoom/List';

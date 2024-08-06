@@ -27,6 +27,7 @@ export default {
         'avatar-lg': '130px',
         modal: '450px',
         'modal-sm': '300px',
+        'modal-xl': '700px',
         form: '550px'
       },
 
