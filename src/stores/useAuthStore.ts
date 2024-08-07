@@ -1,4 +1,4 @@
-import create from 'zustand';
+import { create } from 'zustand';
 import { auth, db } from '../../fireBase/config';
 import {
   doc,
@@ -20,8 +20,9 @@ export const useAuthStore = create<AuthState>((set) => ({
   currentUser: undefined,
   currentUserProfile: undefined,
   fetchUserData: async () => {
-    auth.onAuthStateChanged(async (user) => {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (!user) {
+        set({ currentUser: undefined, currentUserProfile: undefined });
         return;
       }
 
@@ -29,6 +30,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       const userDocSnap = await getDoc(userDocRef);
 
       if (!userDocSnap.exists()) {
+        set({ currentUser: undefined, currentUserProfile: undefined });
         return;
       }
 
@@ -38,7 +40,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       );
       const profileSnapshot = await getDocs(profileQuery);
 
-      let profileData: DocumentData;
+      let profileData: DocumentData | undefined;
       if (!profileSnapshot.empty) {
         profileData = profileSnapshot.docs.map((doc) => ({
           id: doc.id,
@@ -48,8 +50,10 @@ export const useAuthStore = create<AuthState>((set) => ({
 
       set({
         currentUser: userDocSnap.data(),
-        currentUserProfile: profileData!
+        currentUserProfile: profileData
       });
     });
+
+    return unsubscribe;
   }
 }));

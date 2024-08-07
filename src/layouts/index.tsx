@@ -45,7 +45,8 @@ import {
   createChat,
   getChatsByUserId,
   getLastMessagesByRoomId,
-  listenToChats
+  listenToChats,
+  updateUserStatus
 } from '@/services';
 
 // Utils
@@ -70,6 +71,7 @@ const Layout = () => {
   const [isOpenNewModal, setIsOpenNewModal] = useState<boolean>(false);
   const [isOpenMemberModal, setIsOpenMemberModal] = useState<boolean>(false);
   const [isOpenProfile, setIsOpenProfile] = useState<boolean>(false);
+  const [isOpenSignOut, setIsOpenSignOut] = useState<boolean>(false);
   const [chats, setChats] = useState<IChat[]>([]);
   const [lastMessages, setLastMessages] = useState<Record<string, IMessage>>(
     {}
@@ -151,6 +153,8 @@ const Layout = () => {
 
   // Search filter chat
   const filterChats = useMemo(() => {
+    if (!currentUser) return [];
+
     return chats.filter((chat) => {
       if (chat.title) {
         return chat.title.toLowerCase().includes(debouncedSearch.toLowerCase());
@@ -237,13 +241,27 @@ const Layout = () => {
     setIsOpenMemberModal(false);
   }, [chatAvatar, chatName, checkedUsers, currentUser, resetStore]);
 
+  // Handle toggle modal to sign out
+  const handleToggleModalSignOut = useCallback(() => {
+    setIsOpenSignOut(!isOpenSignOut);
+  }, [isOpenSignOut]);
+
+  // Handle sign out
+  const handleSignOut = useCallback(async () => {
+    if (currentUser?.id) {
+      await updateUserStatus(currentUser.id, false);
+    }
+    await signOut(auth);
+  }, [currentUser]);
+
+  // Handle selected item in user menu
   const handleSelect = (item: DropdownItem) => {
     switch (item.value) {
       case 'profile':
         handleToggleProfile();
         break;
       case 'logout':
-        signOut(auth);
+        handleToggleModalSignOut();
         break;
       default:
         break;
@@ -360,6 +378,31 @@ const Layout = () => {
         title="Profile"
       >
         <Profile />
+      </Modal>
+      <Modal
+        isOpen={isOpenSignOut}
+        title="Sign out"
+        onCloseModal={handleToggleModalSignOut}
+        styles="w-modal-sm h-modal-sm"
+      >
+        <div className="p-4">
+          <p className="text-center text-sm">Do you want to log out?</p>
+
+          <div className="mt-10 flex gap-3 justify-center">
+            <Button
+              name="Cancel"
+              onClick={handleToggleModalSignOut}
+              variant={TYPE.SECOND}
+              size={SIZE.MINI}
+            />
+            <Button
+              name="OK"
+              onClick={handleSignOut}
+              variant={TYPE.PRIMARY}
+              size={SIZE.MINI}
+            />
+          </div>
+        </div>
       </Modal>
     </div>
   );

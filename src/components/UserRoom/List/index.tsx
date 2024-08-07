@@ -4,7 +4,7 @@ import { memo } from 'react';
 import { IChat, IMessage, IProfile, IUser } from '@/interfaces';
 
 // Hooks
-import { useUsersWithProfiles } from '@/hooks';
+import { useUsersWithProfiles, useOnlineStatus } from '@/hooks';
 
 // Components
 import { UserProps, UserRoom } from '@/components/UserRoom';
@@ -18,15 +18,9 @@ interface ListProps extends UserProps {
 }
 
 const ListUser = memo(
-  ({
-    data,
-    profiles,
-    isActive,
-    onSelected,
-    currentUser,
-    messages
-  }: ListProps) => {
+  ({ data, profiles, onSelected, currentUser, messages }: ListProps) => {
     const { users } = useUsersWithProfiles();
+    const status = useOnlineStatus(currentUser);
 
     const getUserDetails = (item: IUser | IChat) => {
       const id = item.id;
@@ -35,7 +29,7 @@ const ListUser = memo(
       const avatar = isUser ? profiles[id]?.avatar : item.avatar;
 
       if (isUser || item.isGroup) {
-        return { name, avatar };
+        return { name, avatar, otherUserId: '' };
       }
 
       const otherMemberId = item.members.find(
@@ -45,20 +39,23 @@ const ListUser = memo(
       const otherUser = users?.find((user) => user.id === otherMemberId);
 
       if (!otherUser) {
-        return { name, avatar };
+        return { name, avatar, otherUserId: '' };
       }
 
       return {
         name: item.title || otherUser.userName,
-        avatar: item.avatar || profiles[otherUser.id]?.avatar
+        avatar: item.avatar || profiles[otherUser.id]?.avatar,
+        otherUserId: otherUser.id
       };
     };
 
     return data.map((item) => {
-      const { name, avatar } = getUserDetails(item);
+      const { name, avatar, otherUserId } = getUserDetails(item);
       const id = item.id;
       const isUser = 'userName' in item;
       const lastMessage = messages?.find((msg) => msg.roomId === id);
+      const isActive =
+        status[id] || (otherUserId && status[otherUserId]) || false;
 
       return (
         <UserRoom

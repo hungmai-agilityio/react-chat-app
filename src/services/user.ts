@@ -5,6 +5,7 @@ import {
   getDoc,
   getDocs,
   query,
+  setDoc,
   where
 } from 'firebase/firestore';
 import { db } from '../../fireBase/config';
@@ -100,4 +101,17 @@ export const getUserById = async (
       error
     };
   }
+};
+
+/**
+ * Updates the online status of a user in Firestore.
+ *
+ * @param {string} userId - The ID of the user whose status is to be updated.
+ * @param {boolean} status - The new online status of the user (true for online, false for offline).
+ *
+ * @returns Promise<void> - A promise that resolves when the update is complete.
+ */
+export const updateUserStatus = async (userId: string, status: boolean) => {
+  const userDocRef = doc(db, END_POINT.USER, userId);
+  await setDoc(userDocRef, { isOnline: status }, { merge: true });
 };
