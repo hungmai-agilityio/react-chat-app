@@ -482,7 +482,7 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
               </span>
             </div>
 
-            {messages.length ? (
+            {selectedRoom && messages.length ? (
               <Dropdown
                 icon={faEllipsisVertical}
                 items={INFO_OPTIONS}
