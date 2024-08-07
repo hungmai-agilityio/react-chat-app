@@ -23,9 +23,6 @@ const meta: Meta<typeof AddMember> = {
     onChecked: {
       description: 'Handles check users to add to the member list'
     },
-    isActive: {
-      description: 'Check if any users are connected'
-    },
     checkedUsers: {
       description: 'List of checked users'
     }
@@ -41,7 +38,6 @@ export const Default: Story = {
     users: mockUsers,
     profiles: mockProfiles,
     onChecked: (id) => console.log('Checked user ID:', id),
-    isActive: true,
     currentUserId: '701796f0-0253-11ef-804b-d90ac4375227',
     checkedUsers: []
   },
@@ -63,7 +59,6 @@ export const MemberChecked: Story = {
     users: mockUsers,
     profiles: mockProfiles,
     onChecked: (id) => console.log('Checked user ID:', id),
-    isActive: true,
     currentUserId: '701796f0-0253-11ef-804b-d90ac4375227',
     checkedUsers: ['8a741820-0253-11ef-804b-d90ac4375227']
   },

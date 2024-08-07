@@ -365,7 +365,6 @@ const Layout = () => {
         <AddMember
           checkedUsers={checkedUsers}
           currentUserId={currentUser?.id}
-          isActive
           onChecked={handleChecked}
           users={users}
           profiles={profiles}
