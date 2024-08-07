@@ -120,6 +120,7 @@ const Profile = memo(() => {
       setAuthMessage(MESSAGE_API.UPDATE_PROFILE_ERROR);
       return;
     }
+    setAuthMessage(MESSAGE_API.UPDATE_PROFILE_SUCCESS);
   }, [profile, uploadImage, user]);
 
   // Handle change user value
