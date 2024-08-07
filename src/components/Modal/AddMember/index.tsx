@@ -12,11 +12,13 @@ import Divider from '@/components/Divider';
 // Utils
 import { debounce } from '@/utils';
 
+// Hooks
+import { useOnlineStatus } from '@/hooks';
+
 interface AddMemberProps {
   users: IUser[];
   profiles: Record<string, IProfile>;
   onChecked: (id: string) => void;
-  isActive: boolean;
   currentUserId: string;
   checkedUsers: string[];
 }
@@ -25,12 +27,13 @@ const AddMember = ({
   users,
   profiles,
   onChecked,
-  isActive,
   currentUserId,
   checkedUsers
 }: AddMemberProps) => {
   const [searchValue, setSearchValue] = useState<string>('');
   const [debouncedSearchValue, setDebouncedSearchValue] = useState<string>('');
+
+  const status = useOnlineStatus(currentUserId);
 
   // Creates a debounced version of the search function.
   const debouncedSearch = useCallback(
@@ -75,7 +78,6 @@ const AddMember = ({
                   id={user.id}
                   name={user.userName}
                   avatar={profile?.avatar || ''}
-                  isActive={isActive}
                   isItemChecked
                 />
               );
@@ -88,6 +90,7 @@ const AddMember = ({
       <div className="h-modal-body hover:overflow-y-auto scrollbar">
         {filteredUsers.map((user) => {
           const profile = profiles[user.id];
+          const isActive = status[user.id] || false;
 
           return (
             <div key={user.id}>

@@ -7,6 +7,9 @@ import { ItemUser, ItemUserProps } from '@/components/Item';
 import Divider from '@/components/Divider';
 import Button from '@/components/Button';
 
+// Hooks
+import { useOnlineStatus } from '@/hooks';
+
 interface InfoProps {
   currentUserId: string;
   member: ItemUserProps[];
@@ -30,9 +33,11 @@ const ModalInfo = ({
   isOwner,
   onClick
 }: InfoProps) => {
+  const status = useOnlineStatus(currentUserId);
+
   const listMember = member.map((user) => ({
     ...user,
-    isActive: user.isActive ?? false,
+    isActive: status[user.id!] || false,
     isCurrentUser: user.id === currentUserId,
     isGroup: isGroup
   }));

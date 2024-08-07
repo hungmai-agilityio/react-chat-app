@@ -10,6 +10,7 @@ import { Message } from '@/components/Message';
 
 // Utils
 import { DateConversion } from '@/utils';
+import { useOnlineStatus } from '@/hooks';
 
 interface GroupedMessagesProps {
   messages: IMessage[];
@@ -27,6 +28,8 @@ export const GroupedMessages = memo(
     onEdit,
     onDelete
   }: GroupedMessagesProps) => {
+    const status = useOnlineStatus(currentUser);
+
     const handleEdit = (item: IMessage) => {
       if (onEdit) {
         onEdit(item);
@@ -75,6 +78,7 @@ export const GroupedMessages = memo(
                 name: '',
                 avatar: ''
               };
+              const isActive = status[item.sender] || false;
 
               return (
                 <Message
@@ -83,7 +87,7 @@ export const GroupedMessages = memo(
                   isCurrentUser={item.sender === currentUser}
                   avatar={avatar}
                   name={name}
-                  isActive
+                  isActive={isActive}
                   onEdit={handleEdit}
                   onDelete={handleRemove}
                 />
