@@ -11,16 +11,15 @@ import {
 } from 'react';
 import { clsx } from 'clsx';
 import { v4 as uuidv4 } from 'uuid';
-import useSWR from 'swr';
 
 // Constants
-import { END_POINT, INFO_OPTIONS, POSITION, SIZE, TYPE } from '@/constants';
+import { INFO_OPTIONS, POSITION, SIZE, TYPE } from '@/constants';
 
 // Utils
 import { sortMessagesByTimestamp } from '@/utils';
 
 // Hooks
-import { useOutsideClick, useUsersWithProfiles } from '@/hooks';
+import { useChats, useOutsideClick, useUsersWithProfiles } from '@/hooks';
 
 // FontAwesome
 import { faEllipsisVertical, faPen } from '@fortawesome/free-solid-svg-icons';
@@ -37,7 +36,6 @@ import {
   UserLeaveGroup,
   createChat,
   getChatById,
-  getChats,
   getMessagesByRoomId,
   getRoomIdForUsers,
   getUserById,
@@ -88,10 +86,7 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
   const { users, profiles } = useUsersWithProfiles();
   const { chatName, setChatName, chatAvatar, setChatAvatar } = useAppStore();
 
-  const { data: chats, error: chatError } = useSWR<IChat[]>(
-    END_POINT.CHAT,
-    getChats
-  );
+  const { chats, error: chatError } = useChats();
 
   useEffect(() => {
     let unsubscribe: (() => void) | null = null;
@@ -207,7 +202,7 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
       const existingChat = chats?.find(
         (chat) =>
           !chat.isGroup &&
-          chat.members.includes(currentUser?.id || '') &&
+          chat.members.includes(currentUser?.id) &&
           chat.members.includes(selectedUser)
       );
 
@@ -216,7 +211,7 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
           id: uuidv4(),
           title: '',
           avatar: '',
-          members: [currentUser?.id || '', selectedUser],
+          members: [currentUser?.id, selectedUser],
           isGroup: false
         };
 
@@ -232,9 +227,9 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
     const newMessage: IMessage = {
       id: uuidv4(),
       message: value,
-      sender: currentUser?.id || '',
+      sender: currentUser?.id,
       time_stamp: new Date(),
-      roomId: roomId || ''
+      roomId: roomId!
     };
 
     await sendMessage(newMessage);
@@ -443,7 +438,7 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
     }
 
     setIsOpenRemoveModal(false);
-    setEditingMessage(null);
+    handleCancelEdit();
   }, [editingMessage]);
 
   if (chatError) {

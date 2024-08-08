@@ -28,7 +28,6 @@ export const getChats = async (): Promise<IChat[]> => {
   const querySnapshot = await getDocs(chatsCollection);
   return querySnapshot.docs.map((doc) => ({
     ...doc.data(),
-    id: doc.id
   })) as IChat[];
 };
 
