@@ -20,6 +20,7 @@ export interface AuthProps {
   onClick: (e: FormEvent<HTMLButtonElement>) => void;
   message?: { [key: string]: string };
   authMessage?: string;
+  isDisabled?: boolean
 }
 
 export interface ApiResponse<T> {

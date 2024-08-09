@@ -2,7 +2,7 @@ import { ChangeEvent, memo, useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // Constants
-import { MESSAGE_API, MESSAGE_VALID, SIZE, TYPE } from '@/constants';
+import { MESSAGE_API, SIZE, TYPE } from '@/constants';
 
 // Utils
 import { convertBase64, validateForm } from '@/utils';
@@ -11,7 +11,7 @@ import { convertBase64, validateForm } from '@/utils';
 import { IProfile, IUser } from '@/interfaces';
 
 // Services
-import { getUserByEmail, updateUser } from '@/services';
+import { updateUser } from '@/services';
 
 // Stores
 import { useAuthStore } from '@/stores';
@@ -44,6 +44,7 @@ const Profile = memo(() => {
     avatar: currentUser?.avatar || '',
     phone: currentUser?.phone || ''
   });
+  const [isSubmit, setIsSubmit] = useState<boolean>(false);
 
   // Fetch user data if currentUser is not available
   useEffect(() => {
@@ -92,11 +93,6 @@ const Profile = memo(() => {
     }
     setErrorMessage({});
 
-    const existingUser = await getUserByEmail(user.email);
-    if (existingUser.data && existingUser.data.id !== user.id) {
-      setAuthMessage(MESSAGE_VALID.EMAIL_EXIST);
-      return;
-    }
     const userData = {
       ...user,
       userName: user.userName,
@@ -108,6 +104,8 @@ const Profile = memo(() => {
       phone: profile.phone
     };
 
+    setIsSubmit(true);
+
     // Update user document
     const accountResponse = await updateUser('users', user.id, userData);
     const profileResponse = await updateUser(
@@ -116,10 +114,13 @@ const Profile = memo(() => {
       profileData
     );
 
+    setIsSubmit(false);
+
     if (!accountResponse.data || !profileResponse.data) {
       setAuthMessage(MESSAGE_API.UPDATE_PROFILE_ERROR);
       return;
     }
+
     setAuthMessage(MESSAGE_API.UPDATE_PROFILE_SUCCESS);
   }, [profile, uploadImage, user]);
 
@@ -196,6 +197,7 @@ const Profile = memo(() => {
           variant={TYPE.PRIMARY}
           size={SIZE.MEDIUM}
           onClick={handleUpdateProfile}
+          disabled={isSubmit}
         />
       </div>
       <p className="text-lg mt-5 text-center">{authMessage}</p>

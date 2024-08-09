@@ -1,5 +1,4 @@
 import React, { useState, ChangeEvent, FormEvent, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
 // Firebases
@@ -15,7 +14,7 @@ import { addUser, addProfileUser, getUserByEmail } from '@/services';
 import { validateForm } from '@/utils';
 
 // Constants
-import { MESSAGE_API, MESSAGE_VALID, URL } from '@/constants';
+import { MESSAGE_API, MESSAGE_VALID } from '@/constants';
 
 // Components
 import { SignUp } from '@/components';
@@ -26,10 +25,10 @@ const SignUpPage = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [confirm, setConfirm] = useState<string>('');
+  const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<{ [key: string]: string }>(
     {}
   );
-  const navigate = useNavigate();
 
   // Handle Sign up new user
   const handleSignUp = useCallback(
@@ -50,7 +49,7 @@ const SignUpPage = () => {
         setAuthMessage(MESSAGE_VALID.EMAIL_EXIST);
         return;
       }
-
+      setIsSubmit(true);
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
@@ -77,16 +76,15 @@ const SignUpPage = () => {
       };
 
       const profile = await addProfileUser(newProfile);
-
+      setIsSubmit(false);
       if (!account.data || !profile.data) {
         setAuthMessage(MESSAGE_API.SIGN_UP_ERROR);
         return;
       }
 
       setAuthMessage('');
-      navigate(URL.SIGN_IN);
     },
-    [confirm, email, name, navigate, password]
+    [confirm, email, name, password]
   );
 
   // Handle change input value
@@ -109,6 +107,7 @@ const SignUpPage = () => {
       onClick={handleSignUp}
       message={errorMessage}
       authMessage={authMessage}
+      isDisabled={isSubmit}
     />
   );
 };

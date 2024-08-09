@@ -26,7 +26,8 @@ const SignUp = ({
   onConfirmChange,
   onClick,
   message,
-  authMessage
+  authMessage,
+  isDisabled
 }: AuthProps) => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] =
@@ -93,6 +94,7 @@ const SignUp = ({
             variant={TYPE.PRIMARY}
             onClick={onClick!}
             size={SIZE.LARGE}
+            disabled={isDisabled}
           />
           {authMessage && (
             <p className="mt-3 text-center text-red-500">{authMessage}</p>
