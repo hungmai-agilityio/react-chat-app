@@ -33,7 +33,7 @@ import { useAppStore } from '@/stores';
 
 // Services
 import {
-  UserLeaveGroup,
+  userLeaveGroup,
   createChat,
   getChatById,
   getMessagesByRoomId,
@@ -352,7 +352,7 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
 
   // Handle current user leave chat group
   const handleLeaveGroup = useCallback(async () => {
-    await UserLeaveGroup(chatData!.id, currentUser?.id);
+    await userLeaveGroup(chatData!.id, currentUser?.id);
     setIsOpenInfoModal(false);
     setMessages([]);
     setChatData(null);
