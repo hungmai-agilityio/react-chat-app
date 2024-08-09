@@ -50,8 +50,7 @@ import {
 } from '@/services';
 
 // Utils
-import { searchFilter } from '@/utils';
-import { debounce } from '@/utils';
+import { searchFilter, debounce } from '@/utils';
 
 // Constants
 import { LIST_TAB_USERS, POSITION, SIZE, TYPE } from '@/constants';
@@ -239,6 +238,15 @@ const Layout = () => {
     await createChat(chatData);
     resetStore();
     setIsOpenMemberModal(false);
+
+    // Fetch updated chats and last messages
+    const { data: updatedChats } = await getChatsByUserId(currentUser.id);
+    setChats(updatedChats || []);
+
+    if (updatedChats) {
+      const roomIds = updatedChats.map((chat) => chat.id);
+      await getLastMessagesByRoomId(roomIds, setLastMessages);
+    }
   }, [chatAvatar, chatName, checkedUsers, currentUser, resetStore]);
 
   // Handle toggle modal to sign out

@@ -27,7 +27,7 @@ export const getChats = async (): Promise<IChat[]> => {
   const chatsCollection = collection(db, END_POINT.CHAT);
   const querySnapshot = await getDocs(chatsCollection);
   return querySnapshot.docs.map((doc) => ({
-    ...doc.data(),
+    ...doc.data()
   })) as IChat[];
 };
 
@@ -193,21 +193,22 @@ export const removeMemberFromChat = async (
  * @param memberId - ID of the member to be removed
  * @returns {Promise<ApiResponse<IChat>>}
  */
-export const UserLeaveGroup = async (
+export const userLeaveGroup = async (
   chatId: string,
   memberId: string
-): Promise<ApiResponse<null>> => {
+): Promise<ApiResponse<IChat | null>> => {
   try {
+    const chatQuery = query(
+      collection(db, END_POINT.CHAT),
+      where('id', '==', chatId)
+    );
+    const chatSnapshot = await getDocs(chatQuery);
+    const chatDoc = chatSnapshot.docs[0];
+    const chatData = chatDoc.data() as IChat;
+
     const { data } = await removeMemberFromChat(chatId, memberId);
 
     if (data?.members.length === 0) {
-      const chatQuery = query(
-        collection(db, END_POINT.CHAT),
-        where('id', '==', chatId)
-      );
-      const chatSnapshot = await getDocs(chatQuery);
-      const chatDoc = chatSnapshot.docs[0];
-
       await deleteDoc(chatDoc.ref);
 
       const messagesQuery = query(
@@ -219,12 +220,24 @@ export const UserLeaveGroup = async (
       const removeMessage = messagesSnapshot.docs.map((doc) =>
         deleteDoc(doc.ref)
       );
-
       await Promise.all(removeMessage);
+
+      return { data: null, error: null };
     }
 
+    if (chatData.owner === memberId) {
+      const remainingMembers = chatData.members.filter((id) => id !== memberId);
+      chatData.owner = remainingMembers[0];
+    }
+
+    await updateDoc(chatDoc.ref, {
+      members: arrayRemove(memberId),
+      owner: chatData.owner
+    });
+
+    const updatedChat = (await getDoc(chatDoc.ref)).data() as IChat;
     return {
-      data: null,
+      data: updatedChat,
       error: null
     };
   } catch (error) {
