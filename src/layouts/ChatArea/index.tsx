@@ -229,7 +229,7 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
       message: value,
       sender: currentUser?.id,
       time_stamp: new Date(),
-      roomId: roomId!
+      roomId: roomId || ''
     };
 
     await sendMessage(newMessage);
