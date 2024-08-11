@@ -1,6 +1,7 @@
 import {
   ChangeEvent,
   Suspense,
+  lazy,
   useCallback,
   useEffect,
   useMemo,
@@ -51,9 +52,9 @@ import {
   ModalAction,
   Profile,
   AddMember,
-  Spinner,
-  ListUser
+  Spinner
 } from '@/components';
+const ListUser = lazy(() => import('@/components/UserRoom/List'));
 
 interface ChatProps {
   onSelectRoom: (id: string, isUser: boolean) => void;
@@ -98,7 +99,7 @@ const ChatSide = ({ onSelectRoom }: ChatProps) => {
     const subscribeToChats = () => {
       cleanup = listenToChats(currentUser.id, async (updatedChats) => {
         if (Array.isArray(updatedChats)) {
-          mutateChats(updatedChats as IChat[], false);
+          mutateChats(updatedChats, false);
           const roomIds = updatedChats.map((chat) => chat.id);
           getLastMessagesByRoomId(roomIds, setLastMessages);
         }
