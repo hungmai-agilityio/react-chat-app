@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import {
   ChangeEvent,
-  FormEvent,
   memo,
   useCallback,
   useEffect,
@@ -10,7 +9,6 @@ import {
   useState
 } from 'react';
 import { clsx } from 'clsx';
-import { v4 as uuidv4 } from 'uuid';
 
 // Constants
 import { INFO_OPTIONS, POSITION, SIZE, TYPE } from '@/constants';
@@ -19,7 +17,7 @@ import { INFO_OPTIONS, POSITION, SIZE, TYPE } from '@/constants';
 import { sortMessagesByTimestamp } from '@/utils';
 
 // Hooks
-import { useChats, useOutsideClick, useUsersWithProfiles } from '@/hooks';
+import { useChats, useUsersWithProfiles } from '@/hooks';
 
 // FontAwesome
 import { faEllipsisVertical, faPen } from '@fortawesome/free-solid-svg-icons';
@@ -33,16 +31,13 @@ import { useAuthStore } from '@/stores/useAuthStore';
 // Services
 import {
   userLeaveGroup,
-  createChat,
   getChatById,
   getMessagesByRoomId,
   getRoomIdForUsers,
   getUserById,
   removeMemberFromChat,
   removeMessage,
-  sendMessage,
-  updateChatInfo,
-  updateMessage
+  updateChatInfo
 } from '@/services';
 
 // Components
@@ -52,34 +47,31 @@ import {
   DropdownItem,
   Button,
   GroupedMessages,
-  Input,
   Modal,
   ModalAction,
   ModalInfo,
   Spinner
 } from '@/components';
+import ChatMessage from '@/components/Chat';
 
 interface ChatProps {
   selectedRoom?: string;
   selectedUser?: string;
 }
 const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
-  const [isFocused, setIsFocused] = useState<boolean>(false);
-  const [value, setValue] = useState<string>('');
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [isOpenInfoModal, setIsOpenInfoModal] = useState<boolean>(false);
   const [isOpenEditModal, setIsOpenEditModal] = useState<boolean>(false);
   const [isOpenRemoveModal, setIsOpenRemoveModal] = useState<boolean>(false);
   const [chatData, setChatData] = useState<IChat | null>(null);
   const [user, setUser] = useState<IUser | null>(null);
-  const [editingMessage, setEditingMessage] = useState<string | null>(null);
+  const [editingMessage, setEditingMessage] = useState<IMessage | null>(null);
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [isChatDisabled, setIsChatDisabled] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [chatName, setChatName] = useState<string>('');
   const [chatAvatar, setChatAvatar] = useState<string>('');
 
-  const inputRef = useRef<HTMLDivElement>(null);
   const messagesRef = useRef<HTMLDivElement>(null);
 
   // Store + Hooks
@@ -158,14 +150,6 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
     };
   }, [currentUser?.id, selectedUser]);
 
-  // Handler to set the input field as focused
-  const handleFocus = () => setIsFocused(true);
-
-  useOutsideClick({
-    ref: inputRef,
-    handler: () => setIsFocused(false)
-  });
-
   // Scroll view to bottom (last messages)
   useEffect(() => {
     messagesRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -184,75 +168,6 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
       return profileMap;
     }, new Map<string, { name: string; avatar: string }>());
   }, [users, profiles]);
-
-  // Handler to update the input field value
-  const handleChange = (
-    event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
-  ) => {
-    setValue(event.target.value);
-  };
-
-  // Handle Send message
-  const handleSend = useCallback(async () => {
-    if (!value.trim().length) return;
-
-    let roomId = chatData?.id;
-
-    if (!roomId && selectedUser) {
-      const existingChat = chats?.find(
-        (chat) =>
-          !chat.isGroup &&
-          chat.members.includes(currentUser?.id || '') &&
-          chat.members.includes(selectedUser)
-      );
-
-      if (!existingChat) {
-        const newChat: IChat = {
-          id: uuidv4(),
-          title: '',
-          avatar: '',
-          members: [currentUser?.id || '', selectedUser],
-          isGroup: false
-        };
-
-        const createChatResponse = await createChat(newChat);
-        roomId = createChatResponse.data?.id;
-      }
-
-      if (existingChat) {
-        roomId = existingChat?.id;
-      }
-    }
-
-    const newMessage: IMessage = {
-      id: uuidv4(),
-      message: value,
-      sender: currentUser?.id || '',
-      time_stamp: new Date(),
-      roomId: roomId || ''
-    };
-
-    await sendMessage(newMessage);
-
-    setMessages((prevMessages) => {
-      const messageExists = prevMessages.some(
-        (msg) => msg.id === newMessage.id
-      );
-      if (messageExists) return prevMessages;
-
-      return [...prevMessages, newMessage];
-    });
-    setValue('');
-  }, [value, currentUser?.id, chatData, selectedUser, chats]);
-
-  const handleKeyDown = (
-    e: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>
-  ) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
-  };
 
   // Handle close modal
   const handleToggleInfoModal = useCallback(() => {
@@ -365,59 +280,30 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
    * @param {IMessage} item
    */
   const handleEditMessage = useCallback((item: IMessage) => {
-    setValue(item.message);
-    setEditingMessage(item.id);
+    setEditingMessage(item);
     setIsEdit(true);
   }, []);
 
   // Handle cancel edit message
   const handleCancelEdit = useCallback(() => {
-    setValue('');
     setEditingMessage(null);
     setIsEdit(false);
   }, []);
-
-  // Handle update message
-  const handleUpdateMessage = useCallback(
-    async (e: FormEvent<HTMLButtonElement>) => {
-      e.preventDefault();
-
-      if (!value.trim().length || !editingMessage) return;
-
-      const updatedMessage: Partial<IMessage> = {
-        id: editingMessage,
-        message: value,
-        sender: currentUser?.id || '',
-        isEdit: true
-      };
-
-      const { data } = await updateMessage(updatedMessage as IMessage);
-
-      if (data) {
-        setMessages((prev) =>
-          prev.map((msg) =>
-            msg.id === editingMessage
-              ? { ...msg, message: value, isEdit: true }
-              : msg
-          )
-        );
-      }
-
-      handleCancelEdit();
-    },
-    [value, editingMessage, currentUser?.id, handleCancelEdit]
-  );
 
   /**
    * Handle get id message and open modal
    * @param {string} id
    */
-  const handleOpenModalRemove = useCallback((id?: string) => {
-    if (id) {
-      setEditingMessage(id);
-    }
-    setIsOpenRemoveModal(true);
-  }, []);
+  const handleOpenModalRemove = useCallback(
+    (id?: string) => {
+      if (id) {
+        const message = messages.find((msg) => msg.id === id) || null;
+        setEditingMessage(message);
+      }
+      setIsOpenRemoveModal(true);
+    },
+    [messages]
+  );
 
   // Toggle Modal handle to remove
   const handleCloseModalRemove = useCallback(() => {
@@ -431,10 +317,10 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
   const handleRemoveMessage = useCallback(async () => {
     if (!editingMessage) return;
 
-    const { success } = await removeMessage(editingMessage);
+    const { success } = await removeMessage(editingMessage.id);
 
     if (success) {
-      setMessages((prev) => prev.filter((msg) => msg.id !== editingMessage));
+      setMessages((prev) => prev.filter((msg) => msg.id !== editingMessage.id));
     }
 
     setIsOpenRemoveModal(false);
@@ -509,40 +395,17 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
               />
               <div ref={messagesRef}></div>
             </div>
-            <div
-              ref={inputRef}
-              onFocus={handleFocus}
-              className={clsx('relative p-2 transition-all')}
-            >
-              <Input
-                htmlFor="message-value"
-                onChange={handleChange}
-                name="message"
-                value={value}
-                variant={TYPE.SECOND}
-                disabled={isChatDisabled}
-                onKeyDown={handleKeyDown}
-              />
-              {isFocused && (
-                <div className="float-right">
-                  <div className="flex gap-5">
-                    {isEdit && (
-                      <Button
-                        name="Cancel"
-                        onClick={handleCancelEdit}
-                        size={SIZE.MINI}
-                      />
-                    )}
-                    <Button
-                      name={isEdit ? 'Update' : 'Send'}
-                      onClick={isEdit ? handleUpdateMessage : handleSend}
-                      disabled={value.length === 0 || isChatDisabled}
-                      size={SIZE.MINI}
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
+            <ChatMessage
+              currentUserId={currentUser?.id}
+              isDisabled={isChatDisabled}
+              setMessages={setMessages}
+              chatData={chatData!}
+              chats={chats}
+              selectedUser={selectedUser}
+              handleCancelEdit={handleCancelEdit}
+              isEdit={isEdit}
+              editMessage={editingMessage}
+            />
           </>
         )}
       </main>

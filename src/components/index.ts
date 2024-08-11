@@ -11,6 +11,7 @@ export { default as SignUp } from '@/components/Form/SignUp';
 export { default as Input } from '@/components/Input';
 export { default as Loading } from '@/components/Loading';
 export { default as Spinner } from '@/components/Loading/Spinner';
+export { default as ChatMessage } from '@/components/Chat';
 
 export { default as Modal } from '@/components/Modal';
 export { default as ModalAction } from '@/components/Modal/Action';

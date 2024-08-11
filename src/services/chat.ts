@@ -262,7 +262,8 @@ export const sendMessage = async (
     const newMessage = docSnapshot.data() as IMessage;
 
     const responseData = {
-      ...newMessage
+      ...newMessage,
+      id: newMessage.id
     };
 
     return {
