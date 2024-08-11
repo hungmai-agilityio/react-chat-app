@@ -50,6 +50,7 @@ const ChatMessage = ({
 }: ChatMessageProps) => {
   const [value, setValue] = useState<string>('');
   const [isFocused, setIsFocused] = useState<boolean>(false);
+  const [isSending, setIsSending] = useState<boolean>(false);
 
   const inputRef = useRef<HTMLDivElement>(null);
 
@@ -75,7 +76,9 @@ const ChatMessage = ({
 
   // Handle send message
   const handleSend = useCallback(async () => {
-    if (!value.trim().length) return;
+    if (!value.trim().length || isSending) return;
+
+    setIsSending(true);
 
     let roomId = chatData?.id;
 
@@ -124,7 +127,8 @@ const ChatMessage = ({
       return [...prevMessages, newMessage];
     });
     setValue('');
-  }, [value, currentUserId, chatData, selectedUser, chats]);
+    setIsSending(false);
+  }, [value, currentUserId, chatData, selectedUser, chats, isSending]);
 
   // Handle update message
   const handleUpdateMessage = useCallback(async () => {
@@ -161,9 +165,9 @@ const ChatMessage = ({
       e.preventDefault();
       if (isEdit) {
         handleUpdateMessage();
-      } else {
-        handleSend();
+        return;
       }
+      handleSend();
     }
   };
 
