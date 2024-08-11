@@ -29,7 +29,6 @@ import { IChat, IMessage, IUser } from '@/interfaces';
 
 // Stores
 import { useAuthStore } from '@/stores/useAuthStore';
-import { useAppStore } from '@/stores';
 
 // Services
 import {
@@ -77,6 +76,8 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [isChatDisabled, setIsChatDisabled] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [chatName, setChatName] = useState<string>('');
+  const [chatAvatar, setChatAvatar] = useState<string>('');
 
   const inputRef = useRef<HTMLDivElement>(null);
   const messagesRef = useRef<HTMLDivElement>(null);
@@ -84,7 +85,6 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
   // Store + Hooks
   const { currentUser } = useAuthStore();
   const { users, profiles } = useUsersWithProfiles();
-  const { chatName, setChatName, chatAvatar, setChatAvatar } = useAppStore();
 
   const { chats, error: chatError } = useChats();
 
@@ -202,7 +202,7 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
       const existingChat = chats?.find(
         (chat) =>
           !chat.isGroup &&
-          chat.members.includes(currentUser?.id) &&
+          chat.members.includes(currentUser?.id || '') &&
           chat.members.includes(selectedUser)
       );
 
@@ -211,7 +211,7 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
           id: uuidv4(),
           title: '',
           avatar: '',
-          members: [currentUser?.id, selectedUser],
+          members: [currentUser?.id || '', selectedUser],
           isGroup: false
         };
 
@@ -227,7 +227,7 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
     const newMessage: IMessage = {
       id: uuidv4(),
       message: value,
-      sender: currentUser?.id,
+      sender: currentUser?.id || '',
       time_stamp: new Date(),
       roomId: roomId || ''
     };
@@ -284,7 +284,7 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
   const handleChatNameChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const value = event.target.value;
+    const value = event.target.value.trimStart();
     setChatName(value);
 
     setChatData((prevData) => {
@@ -438,7 +438,7 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
     }
 
     setIsOpenRemoveModal(false);
-    handleCancelEdit();
+    setEditingMessage(null);
   }, [editingMessage]);
 
   if (chatError) {

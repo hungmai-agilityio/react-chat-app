@@ -1,9 +1,8 @@
 import { ReactNode } from 'react';
 
 interface FormProps {
-  /** Render dynamic react node children */
   children: ReactNode;
-  
+
   /** Form Title */
   title?: string;
 }

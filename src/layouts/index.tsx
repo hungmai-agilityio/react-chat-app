@@ -7,59 +7,32 @@ import {
   useMemo,
   useState
 } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-import { signOut } from 'firebase/auth';
-import { auth } from '../../fireBase/config';
 
 // Hooks
 import { useUsersWithProfiles } from '@/hooks';
 
 // FontAwesomes
-import {
-  faArrowRight,
-  faPlus,
-  faSearch
-} from '@fortawesome/free-solid-svg-icons';
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
 
 // Components
-import { DropdownItem } from '@/components/Dropdown';
-import {
-  AddMember,
-  Button,
-  Loading,
-  Modal,
-  Panel,
-  Search,
-  Tabs,
-  UserMenu,
-  ModalAction,
-  Profile
-} from '@/components';
+import { Loading, Panel, Search, Spinner, Tabs } from '@/components';
 const ListUser = lazy(() => import('@/components/UserRoom/List'));
 
 // Interfaces
-import { IChat, IMessage, IUser } from '@/interfaces';
-
-// Services
-import {
-  createChat,
-  getChatsByUserId,
-  getLastMessagesByRoomId,
-  listenToChats,
-  updateUserStatus
-} from '@/services';
+import { IUser } from '@/interfaces';
 
 // Utils
 import { searchFilter, debounce } from '@/utils';
 
 // Constants
-import { LIST_TAB_USERS, POSITION, SIZE, TYPE } from '@/constants';
+import { LIST_TAB_USERS } from '@/constants';
 
 // Stores
-import { useAuthStore, useAppStore } from '@/stores';
+import { useAuthStore } from '@/stores';
 
 // Layouts + Pages
 import ChatArea from '@/layouts/ChatArea';
+import ChatSide from '@/layouts/Sidebar/Chats';
 
 const Layout = () => {
   const [value, setValue] = useState<string>('1');
@@ -67,57 +40,10 @@ const Layout = () => {
   const [debouncedSearch, setDebouncedSearch] = useState<string>('');
   const [selectedRoom, setSelectedRoom] = useState<string>('');
   const [selectedUser, setSelectedUser] = useState<string>('');
-  const [isOpenNewModal, setIsOpenNewModal] = useState<boolean>(false);
-  const [isOpenMemberModal, setIsOpenMemberModal] = useState<boolean>(false);
-  const [isOpenProfile, setIsOpenProfile] = useState<boolean>(false);
-  const [isOpenSignOut, setIsOpenSignOut] = useState<boolean>(false);
-  const [chats, setChats] = useState<IChat[]>([]);
-  const [lastMessages, setLastMessages] = useState<Record<string, IMessage>>(
-    {}
-  );
 
   // Store + Hook
-  const { users, profiles, isLoading, isError } = useUsersWithProfiles();
+  const { users, profiles } = useUsersWithProfiles();
   const { currentUser, fetchUserData } = useAuthStore();
-
-  const {
-    chatName,
-    setChatName,
-    chatAvatar,
-    setChatAvatar,
-    checkedUsers,
-    addCheckedUser,
-    resetStore,
-    removeCheckedUser
-  } = useAppStore();
-
-  // Fetch chats when currentUser changes
-  useEffect(() => {
-    if (!currentUser) return;
-    let cleanup: (() => void) | null = null;
-
-    const fetchChats = async () => {
-      const { data } = await getChatsByUserId(currentUser.id);
-      setChats(data || []);
-      if (data) {
-        const roomIds = data.map((chat) => chat.id);
-        return getLastMessagesByRoomId(roomIds, setLastMessages);
-      }
-    };
-
-    const subscribeToChats = () => {
-      cleanup = listenToChats(currentUser.id, setChats);
-    };
-
-    (async () => {
-      await fetchChats();
-      subscribeToChats();
-    })();
-
-    return () => {
-      if (cleanup) cleanup();
-    };
-  }, [currentUser]);
 
   // Handle change tab in sidebar
   const handleChangeTab = useCallback(
@@ -150,28 +76,6 @@ const Layout = () => {
     return searchFilter<IUser>(users, debouncedSearch, ['userName']);
   }, [users, debouncedSearch]);
 
-  // Search filter chat
-  const filterChats = useMemo(() => {
-    if (!currentUser) return [];
-
-    return chats.filter((chat) => {
-      if (chat.title) {
-        return chat.title.toLowerCase().includes(debouncedSearch.toLowerCase());
-      }
-
-      const member = chat.members.find((item) => item !== currentUser?.id);
-      const memberDetail = users.find((user) => user.id === member);
-
-      if (memberDetail) {
-        return memberDetail.userName
-          .toLowerCase()
-          .includes(debouncedSearch.toLowerCase());
-      }
-
-      return false;
-    });
-  }, [chats, debouncedSearch, users, currentUser]);
-
   // Handle selected user to open new chat area
   const handleSelectedRoom = useCallback((id: string, isUser: boolean) => {
     if (!isUser) {
@@ -183,149 +87,14 @@ const Layout = () => {
     setSelectedRoom('');
   }, []);
 
-  // Handle toggle new chat modal
-  const handleToggleNewChatModal = useCallback(() => {
-    setIsOpenNewModal(!isOpenNewModal);
-  }, [isOpenNewModal]);
-
-  // Handle toggle add member modal
-  const handleToggleAddMemberModal = useCallback(() => {
-    setIsOpenMemberModal(!isOpenMemberModal);
-    setIsOpenNewModal(!isOpenNewModal);
-  }, [isOpenMemberModal, isOpenNewModal]);
-
-  // Handle checked for add member
-  const handleChecked = (id: string) => {
-    if (checkedUsers.includes(id)) {
-      removeCheckedUser(id);
-      return;
-    }
-    addCheckedUser(id);
-  };
-
-  // Handle Close modal edit profile
-  const handleToggleProfile = useCallback(() => {
-    setIsOpenProfile(!isOpenProfile);
-  }, [isOpenProfile]);
-
-  // Handle change title chat room
-  const handleChatNameChange = (
-    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setChatName(event.target.value);
-  };
-
-  // Handle set avatar for chat room
-  const handleChatAvatarChange = (avatar: string) => {
-    setChatAvatar(avatar);
-  };
-
-  // Handle create new group chat
-  const handleCreateGroupChat = useCallback(async () => {
-    if (!currentUser) return;
-
-    const members = [currentUser.id, ...checkedUsers.map((userId) => userId)];
-
-    const chatData = {
-      id: uuidv4(),
-      title: chatName,
-      avatar: chatAvatar,
-      members,
-      isGroup: true,
-      owner: currentUser.id
-    };
-
-    await createChat(chatData);
-    resetStore();
-    setIsOpenMemberModal(false);
-
-    // Fetch updated chats and last messages
-    const { data: updatedChats } = await getChatsByUserId(currentUser.id);
-    setChats(updatedChats || []);
-
-    if (updatedChats) {
-      const roomIds = updatedChats.map((chat) => chat.id);
-      await getLastMessagesByRoomId(roomIds, setLastMessages);
-    }
-  }, [chatAvatar, chatName, checkedUsers, currentUser, resetStore]);
-
-  // Handle toggle modal to sign out
-  const handleToggleModalSignOut = useCallback(() => {
-    setIsOpenSignOut(!isOpenSignOut);
-  }, [isOpenSignOut]);
-
-  // Handle sign out
-  const handleSignOut = useCallback(async () => {
-    if (currentUser?.id) {
-      await updateUserStatus(currentUser.id, false);
-    }
-    await signOut(auth);
-  }, [currentUser]);
-
-  // Handle selected item in user menu
-  const handleSelect = (item: DropdownItem) => {
-    switch (item.value) {
-      case 'profile':
-        handleToggleProfile();
-        break;
-      case 'logout':
-        handleToggleModalSignOut();
-        break;
-      default:
-        break;
-    }
-  };
-
-  if (isLoading) return <Loading />;
-  if (isError) return <div>Error loading users</div>;
-
-  const currentProfile = currentUser ? profiles[currentUser.id] : null;
-
   return (
     <div className="flex w-screen h-screen overflow-hidden">
       <aside className="bg-tertiary w-full max-w-sidebar h-screen border-r">
         <Tabs list={LIST_TAB_USERS} index={value} onClick={handleChangeTab} />
         <Panel index={value} tabIndex="1">
-          <div className="flex flex-col h-sidebar">
-            <div className="flex-grow">
-              <div className="p-3">
-                <Search
-                  onChange={handleChangeValueUsers}
-                  value={searchValue}
-                  icon={faSearch}
-                />
-              </div>
-              <div className="h-5/6 scrollbar overflow-y-auto">
-                <Suspense fallback={<Loading />}>
-                  <ListUser
-                    data={filterChats}
-                    profiles={profiles}
-                    onSelected={handleSelectedRoom}
-                    isActive
-                    messages={Object.values(lastMessages)}
-                    currentUser={currentUser?.id}
-                  />
-                </Suspense>
-              </div>
-            </div>
-            <div className="mt-auto p-2">
-              <Button
-                name="New Chat"
-                onClick={handleToggleNewChatModal}
-                iconLeft={faPlus}
-                size={SIZE.LARGE}
-                variant={TYPE.SECOND}
-              />
-            </div>
-            <div className="p-3 bg-indigo-100">
-              <UserMenu
-                avatar={currentProfile?.avatar || ''}
-                name={currentUser?.userName || 'User'}
-                onSelect={handleSelect}
-                position={POSITION.BOT_LEFT}
-              />
-            </div>
-          </div>
+          <Suspense fallback={<Spinner />}>
+            <ChatSide onSelectRoom={handleSelectedRoom} />
+          </Suspense>
         </Panel>
         <Panel index={value} tabIndex="2">
           <div className="p-3">
@@ -348,69 +117,6 @@ const Layout = () => {
         </Panel>
       </aside>
       <ChatArea selectedRoom={selectedRoom} selectedUser={selectedUser} />
-      <Modal
-        isOpen={isOpenNewModal}
-        onCloseModal={handleToggleNewChatModal}
-        title="New chat"
-      >
-        <ModalAction
-          onChange={handleChatNameChange}
-          btnName="People"
-          icon={faArrowRight}
-          onClick={handleToggleAddMemberModal}
-          onAvatarChange={handleChatAvatarChange}
-          avatar={chatAvatar}
-          name={chatName}
-        />
-      </Modal>
-      <Modal
-        isOpen={isOpenMemberModal}
-        onReturn={handleToggleAddMemberModal}
-        title="Add members"
-        btnPrimary="Save"
-        onClick={handleCreateGroupChat}
-      >
-        <AddMember
-          checkedUsers={checkedUsers}
-          currentUserId={currentUser?.id}
-          onChecked={handleChecked}
-          users={users}
-          profiles={profiles}
-        />
-      </Modal>
-      <Modal
-        isOpen={isOpenProfile}
-        onCloseModal={handleToggleProfile}
-        styles="w-modal-xl"
-        title="Profile"
-      >
-        <Profile />
-      </Modal>
-      <Modal
-        isOpen={isOpenSignOut}
-        title="Sign out"
-        onCloseModal={handleToggleModalSignOut}
-        styles="w-modal-sm h-modal-sm"
-      >
-        <div className="p-4">
-          <p className="text-center text-sm">Do you want to log out?</p>
-
-          <div className="mt-10 flex gap-3 justify-center">
-            <Button
-              name="Cancel"
-              onClick={handleToggleModalSignOut}
-              variant={TYPE.SECOND}
-              size={SIZE.MINI}
-            />
-            <Button
-              name="OK"
-              onClick={handleSignOut}
-              variant={TYPE.PRIMARY}
-              size={SIZE.MINI}
-            />
-          </div>
-        </div>
-      </Modal>
     </div>
   );
 };
