@@ -328,12 +328,9 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
   }, [editingMessage]);
 
   // Disabled when the chat group is empty
-  const isSaveButtonDisabled = useMemo(() => {
-    if (chatData?.isGroup) {
-      return !chatName.trim();
-    }
-    return false;
-  }, [chatData?.isGroup, chatName]);
+  const isSaveButtonDisabled = chatData?.isGroup
+    ? !chatData?.title.trim()
+    : false;
 
   if (chatError) {
     return <p>Get chats data error!!!</p>;
