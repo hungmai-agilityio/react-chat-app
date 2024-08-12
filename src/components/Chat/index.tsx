@@ -128,7 +128,15 @@ const ChatMessage = ({
     });
     setValue('');
     setIsSending(false);
-  }, [value, currentUserId, chatData, selectedUser, chats, isSending]);
+  }, [
+    value,
+    isSending,
+    chatData?.id,
+    selectedUser,
+    currentUserId,
+    setMessages,
+    chats
+  ]);
 
   // Handle update message
   const handleUpdateMessage = useCallback(async () => {
@@ -155,7 +163,7 @@ const ChatMessage = ({
 
     setValue('');
     handleCancelEdit();
-  }, [value, editMessage, currentUserId, handleCancelEdit]);
+  }, [value, editMessage, currentUserId, handleCancelEdit, setMessages]);
 
   // Handle press enter to send message
   const handleKeyDown = (
@@ -185,6 +193,7 @@ const ChatMessage = ({
         variant={TYPE.SECOND}
         disabled={isDisabled}
         onKeyDown={handleKeyDown}
+        placeholder="Type here..."
       />
       {isFocused && (
         <div className="float-right">

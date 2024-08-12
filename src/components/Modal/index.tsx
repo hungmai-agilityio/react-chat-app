@@ -25,6 +25,7 @@ export interface ModalProps {
   children?: ReactNode;
   onReturn?: () => void;
   styles?: string;
+  isDisabled?: boolean;
 }
 
 const Modal = ({
@@ -36,7 +37,8 @@ const Modal = ({
   icon,
   children,
   onReturn,
-  styles
+  styles,
+  isDisabled
 }: ModalProps) => {
   return (
     <>
@@ -62,6 +64,7 @@ const Modal = ({
                       onClick={onClick!}
                       size={SIZE.SMALL}
                       variant={TYPE.PRIMARY}
+                      disabled={isDisabled}
                     />
                   )}
                   {icon && <Icon icon={icon} onClick={onClick} />}

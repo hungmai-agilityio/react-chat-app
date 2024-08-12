@@ -327,6 +327,14 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
     setEditingMessage(null);
   }, [editingMessage]);
 
+  // Disabled when the chat group is empty
+  const isSaveButtonDisabled = useMemo(() => {
+    if (chatData?.isGroup) {
+      return !chatName.trim();
+    }
+    return false;
+  }, [chatData?.isGroup, chatName]);
+
   if (chatError) {
     return <p>Get chats data error!!!</p>;
   }
@@ -434,6 +442,7 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
         btnPrimary="Save"
         onClick={handleUpdateChat}
         onReturn={handleToggleEditModal}
+        isDisabled={isSaveButtonDisabled}
       >
         <ModalAction
           onChange={handleChatNameChange}

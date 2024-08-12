@@ -64,7 +64,7 @@ const ModalAction = ({
           avatar={avatar || ''}
           size={SIZE.LARGE}
           onClick={handleAvatarClick}
-          styles="rounded-lg"
+          styles="rounded-lg cursor-pointer"
         />
         <input
           ref={fileInputRef}

@@ -158,7 +158,7 @@ const ChatSide = ({ onSelectRoom }: ChatProps) => {
     resetStore();
     setChatAvatar('');
     setChatName('');
-  }, [isOpenNewModal]);
+  }, [isOpenNewModal, resetStore]);
 
   // Handle toggle add member modal
   const handleToggleAddMemberModal = useCallback(() => {
