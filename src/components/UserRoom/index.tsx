@@ -17,7 +17,6 @@ import Avatar from '@/components/Avatar';
 
 export interface UserProps {
   id?: string;
-  isCurrentUser?: boolean;
   name?: string;
   avatar?: string;
   isActive?: boolean;
@@ -32,7 +31,6 @@ export interface UserProps {
 export const UserRoom = memo(
   ({
     id,
-    isCurrentUser,
     name,
     avatar,
     isActive,
@@ -57,8 +55,7 @@ export const UserRoom = memo(
                 icon={faCircle}
                 className={clsx(
                   'absolute text-gray-400 border-xs border-white rounded-full top-6 left-7',
-                  { 'text-green-500': isActive },
-                  { 'text-red-500': isCurrentUser }
+                  { 'text-green-500': isActive }
                 )}
               />
             )}

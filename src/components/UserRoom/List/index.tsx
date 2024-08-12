@@ -49,7 +49,9 @@ const ListUser = memo(
       };
     };
 
-    return data.map((item) => {
+    const listItem = data.filter((user) => user.id !== currentUser);
+
+    return listItem.map((item) => {
       const { name, avatar, otherUserId } = getUserDetails(item);
       const id = item.id;
       const isUser = 'userName' in item;
@@ -61,7 +63,6 @@ const ListUser = memo(
         <UserRoom
           key={id}
           id={id}
-          isCurrentUser={item.id === currentUser}
           name={name}
           avatar={avatar}
           isActive={isActive}
