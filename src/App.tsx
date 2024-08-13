@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { onAuthStateChanged, User } from 'firebase/auth';
+import { SWRConfig } from 'swr';
 
 // Firebases
 import { auth } from '../fireBase/config';
@@ -49,18 +50,24 @@ const App = () => {
   }
 
   return (
-    <ErrorBoundary>
-      <div className="font-roboto">
-        <Routes>
-          <Route path={HOME} element={<Layout />}>
-            <Route path="chat/:id" element={<Layout />} />
-          </Route>
-          <Route path={SIGN_IN} element={<SignInPage />} />
-          <Route path={SIGN_UP} element={<SignUpPage />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </div>
-    </ErrorBoundary>
+    <SWRConfig
+      value={{
+        revalidateOnFocus: false
+      }}
+    >
+      <ErrorBoundary>
+        <div className="font-roboto">
+          <Routes>
+            <Route path={HOME} element={<Layout />}>
+              <Route path="chat/:id" element={<Layout />} />
+            </Route>
+            <Route path={SIGN_IN} element={<SignInPage />} />
+            <Route path={SIGN_UP} element={<SignUpPage />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </div>
+      </ErrorBoundary>
+    </SWRConfig>
   );
 };
 
