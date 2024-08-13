@@ -254,7 +254,7 @@ const ChatSide = ({ onSelectRoom }: ChatProps) => {
               icon={faSearch}
             />
           </div>
-          <div className="h-5/6 scrollbar overflow-y-auto">
+          <div className="max-h-side-chat scrollbar overflow-y-auto">
             <Suspense fallback={<Spinner />}>
               <ListUser
                 data={filterChats}

@@ -53,7 +53,8 @@ export default {
       },
 
       maxHeight: {
-        'modal-body': '550px'
+        'modal-body': '550px',
+        'side-chat': '80vh'
       },
 
       borderWidth: {
