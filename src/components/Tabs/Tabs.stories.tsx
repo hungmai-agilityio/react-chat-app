@@ -1,7 +1,8 @@
+import { useState } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 
 // Components
-import { Tabs } from '@/components/Tabs';
+import { Tabs, Panel } from '@/components';
 import { ITab } from '@/components/Tabs/Tab';
 
 const meta: Meta<typeof Tabs> = {
@@ -11,7 +12,6 @@ const meta: Meta<typeof Tabs> = {
     list: {
       description: 'Render dynamic react node children'
     },
-
     index: {
       description: 'Tab position order'
     },
@@ -36,10 +36,24 @@ const list: Omit<ITab, 'index' | 'onClick'>[] = [
   }
 ];
 
-export const Default: Story = {
-  args: {
-    list: list,
-    index: '2',
-    onClick: () => alert('Tab click')
+export const WithPanels: Story = {
+  render: () => {
+    const [selectedTab, setSelectedTab] = useState<string>('1');
+
+    const handleChangeTab = (event: React.MouseEvent<HTMLButtonElement>) => {
+      setSelectedTab(event.currentTarget.value);
+    };
+
+    return (
+      <div>
+        <Tabs list={list} index={selectedTab} onClick={handleChangeTab} />
+        <Panel index={selectedTab} tabIndex="1">
+          <div className="text-center">Content for Tab 1</div>
+        </Panel>
+        <Panel index={selectedTab} tabIndex="2">
+          <div className="text-center">Content for Tab 2</div>
+        </Panel>
+      </div>
+    );
   }
 };

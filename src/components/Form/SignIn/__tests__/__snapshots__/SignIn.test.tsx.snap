@@ -16,7 +16,7 @@ exports[`SignIn Component should render match to snapshot 1`] = `
       <p
         class="mt-4 text-center text-primary font-semibold text-xl"
       >
-        Sign in to continue to yourDigital Library
+        Sign in to continue to your App
       </p>
       <form
         class="mt-11"
@@ -101,7 +101,7 @@ exports[`SignIn Component should render match to snapshot 1`] = `
           class="text-sm mt-16"
         >
           New User ?
-           
+
           <span
             class="text-dark underline cursor-pointer"
           >

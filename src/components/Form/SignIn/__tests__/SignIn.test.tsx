@@ -26,7 +26,7 @@ describe('SignIn Component', () => {
     renderWithRouter(<SignIn {...defaultProps} />);
 
     expect(
-      screen.getByText('Sign in to continue to yourDigital Library')
+      screen.getByText('Sign in to continue to your App')
     ).toBeInTheDocument();
     expect(screen.getByLabelText('Email')).toBeInTheDocument();
     expect(screen.getByLabelText('Password')).toBeInTheDocument();

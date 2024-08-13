@@ -39,7 +39,7 @@ const SignIn = ({
   };
 
   return (
-    <Form title="Sign in to continue to yourDigital Library">
+    <Form title="Sign in to continue to your App">
       <form className="mt-11">
         <Input
           label="Email"
