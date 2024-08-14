@@ -7,28 +7,22 @@ import {
   useMemo,
   useState
 } from 'react';
-import { v4 as uuidv4 } from 'uuid';
 import { signOut } from 'firebase/auth';
 import { auth } from '../../../fireBase/config';
 import useSWR from 'swr';
 
 // Font Awesome
-import {
-  faSearch,
-  faPlus,
-  faArrowRight
-} from '@fortawesome/free-solid-svg-icons';
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
 
 // Hooks and Stores
 import { useUsersWithProfiles } from '@/hooks';
-import { useAuthStore, useAppStore } from '@/stores';
+import { useAuthStore } from '@/stores';
 
 // Interfaces
 import { IChat, IMessage } from '@/interfaces';
 
 // Services
 import {
-  createChat,
   getChatsByUserId,
   getLastMessagesByRoomId,
   listenToChats,
@@ -49,12 +43,11 @@ import {
   Modal,
   Search,
   UserMenu,
-  ModalAction,
   Profile,
-  AddMember,
   Spinner
 } from '@/components';
 const ListUser = lazy(() => import('@/components/UserRoom/List'));
+const AddGroupChat = lazy(() => import('@/components/Chat/AddGroupChat'));
 
 interface ChatProps {
   onSelectRoom: (id: string, isUser: boolean) => void;
@@ -63,21 +56,15 @@ interface ChatProps {
 const ChatSide = ({ onSelectRoom }: ChatProps) => {
   const [searchValue, setSearchValue] = useState<string>('');
   const [debouncedSearch, setDebouncedSearch] = useState<string>('');
-  const [isOpenNewModal, setIsOpenNewModal] = useState<boolean>(false);
-  const [isOpenMemberModal, setIsOpenMemberModal] = useState<boolean>(false);
   const [isOpenProfile, setIsOpenProfile] = useState<boolean>(false);
   const [isOpenSignOut, setIsOpenSignOut] = useState<boolean>(false);
   const [lastMessages, setLastMessages] = useState<Record<string, IMessage>>(
     {}
   );
-  const [chatName, setChatName] = useState<string>('');
-  const [chatAvatar, setChatAvatar] = useState<string>('');
 
   // Store and hook
   const { users, profiles } = useUsersWithProfiles();
   const { currentUser, fetchUserData } = useAuthStore();
-  const { checkedUsers, addCheckedUser, removeCheckedUser, resetStore } =
-    useAppStore();
 
   const {
     data: chatsData,
@@ -152,60 +139,6 @@ const ChatSide = ({ onSelectRoom }: ChatProps) => {
     });
   }, [chatsData, debouncedSearch, users, currentUser]);
 
-  // Handle toggle new chat modal
-  const handleToggleNewChatModal = useCallback(() => {
-    setIsOpenNewModal(!isOpenNewModal);
-    resetStore();
-    setChatAvatar('');
-    setChatName('');
-  }, [isOpenNewModal, resetStore]);
-
-  // Handle toggle add member modal
-  const handleToggleAddMemberModal = useCallback(() => {
-    setIsOpenMemberModal(!isOpenMemberModal);
-    setIsOpenNewModal(!isOpenNewModal);
-  }, [isOpenMemberModal, isOpenNewModal]);
-
-  // Handle checked for add member
-  const handleChecked = (id: string) => {
-    if (checkedUsers.includes(id)) {
-      removeCheckedUser(id);
-      return;
-    }
-    addCheckedUser(id);
-  };
-
-  // Handle create new group chat
-  const handleCreateGroupChat = useCallback(async () => {
-    if (!currentUser) return;
-
-    const members = [currentUser.id, ...checkedUsers.map((userId) => userId)];
-
-    const chatData = {
-      id: uuidv4(),
-      title: chatName,
-      avatar: chatAvatar,
-      members,
-      isGroup: true,
-      owner: currentUser.id
-    };
-
-    await createChat(chatData);
-    setIsOpenMemberModal(false);
-  }, [chatAvatar, chatName, checkedUsers, currentUser]);
-
-  // Handle change title chat room
-  const handleChatNameChange = (
-    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setChatName(event.target.value.trimStart());
-  };
-
-  // Handle set avatar for chat room
-  const handleChatAvatarChange = (avatar: string) => {
-    setChatAvatar(avatar);
-  };
-
   // Handle toggle profile modal
   const handleToggleProfile = useCallback(() => {
     setIsOpenProfile(!isOpenProfile);
@@ -266,15 +199,9 @@ const ChatSide = ({ onSelectRoom }: ChatProps) => {
             </Suspense>
           </div>
         </div>
-        <div className="mt-auto p-2">
-          <Button
-            name="New Chat"
-            onClick={handleToggleNewChatModal}
-            iconLeft={faPlus}
-            size={SIZE.LARGE}
-            variant={TYPE.SECOND}
-          />
-        </div>
+        <Suspense fallback={<Spinner />}>
+          <AddGroupChat users={users} profiles={profiles} />
+        </Suspense>
         <div className="p-3 bg-indigo-100">
           <UserMenu
             avatar={currentProfile?.avatar || ''}
@@ -284,36 +211,6 @@ const ChatSide = ({ onSelectRoom }: ChatProps) => {
           />
         </div>
       </div>
-      <Modal
-        isOpen={isOpenNewModal}
-        onCloseModal={handleToggleNewChatModal}
-        title="New chat"
-      >
-        <ModalAction
-          onChange={handleChatNameChange}
-          btnName="People"
-          icon={faArrowRight}
-          onClick={handleToggleAddMemberModal}
-          onAvatarChange={handleChatAvatarChange}
-          avatar={chatAvatar}
-          name={chatName}
-        />
-      </Modal>
-      <Modal
-        isOpen={isOpenMemberModal}
-        onReturn={handleToggleAddMemberModal}
-        title="Add members"
-        btnPrimary="Save"
-        onClick={handleCreateGroupChat}
-      >
-        <AddMember
-          checkedUsers={checkedUsers}
-          currentUserId={currentUser?.id}
-          onChecked={handleChecked}
-          users={users}
-          profiles={profiles}
-        />
-      </Modal>
       <Modal
         isOpen={isOpenProfile}
         onCloseModal={handleToggleProfile}
