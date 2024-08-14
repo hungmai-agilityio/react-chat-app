@@ -1,7 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import {
-  ChangeEvent,
+  lazy,
   memo,
+  Suspense,
   useCallback,
   useEffect,
   useMemo,
@@ -11,16 +12,13 @@ import {
 import { clsx } from 'clsx';
 
 // Constants
-import { INFO_OPTIONS, POSITION, SIZE, TYPE } from '@/constants';
+import { SIZE, TYPE } from '@/constants';
 
 // Utils
 import { sortMessagesByTimestamp } from '@/utils';
 
 // Hooks
 import { useChats, useUsersWithProfiles } from '@/hooks';
-
-// FontAwesome
-import { faEllipsisVertical, faPen } from '@fortawesome/free-solid-svg-icons';
 
 // Interfaces
 import { IChat, IMessage, IUser } from '@/interfaces';
@@ -35,24 +33,18 @@ import {
   getMessagesByRoomId,
   getRoomIdForUsers,
   getUserById,
-  removeMemberFromChat,
-  removeMessage,
-  updateChatInfo
+  removeMessage
 } from '@/services';
 
 // Components
 import {
-  Avatar,
-  Dropdown,
-  DropdownItem,
   Button,
   GroupedMessages,
   Modal,
-  ModalAction,
-  ModalInfo,
-  Spinner
+  Spinner,
+  ChatMessage
 } from '@/components';
-import ChatMessage from '@/components/Chat';
+const ChatHeader = lazy(() => import('@/layouts/Header/ChatHeader'));
 
 interface ChatProps {
   selectedRoom?: string;
@@ -60,8 +52,6 @@ interface ChatProps {
 }
 const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
   const [messages, setMessages] = useState<IMessage[]>([]);
-  const [isOpenInfoModal, setIsOpenInfoModal] = useState<boolean>(false);
-  const [isOpenEditModal, setIsOpenEditModal] = useState<boolean>(false);
   const [isOpenRemoveModal, setIsOpenRemoveModal] = useState<boolean>(false);
   const [chatData, setChatData] = useState<IChat | null>(null);
   const [user, setUser] = useState<IUser | null>(null);
@@ -69,8 +59,6 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [isChatDisabled, setIsChatDisabled] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [chatName, setChatName] = useState<string>('');
-  const [chatAvatar, setChatAvatar] = useState<string>('');
 
   const messagesRef = useRef<HTMLDivElement>(null);
 
@@ -83,11 +71,11 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
   useEffect(() => {
     let unsubscribe: (() => void) | null = null;
 
-    if (selectedRoom) {
+    const fetchData = async (isRoom: boolean) => {
       setIsChatDisabled(false);
       setIsLoading(true);
 
-      (async () => {
+      if (isRoom && selectedRoom) {
         const chat = await getChatById(selectedRoom);
         setChatData(chat.data);
 
@@ -104,25 +92,9 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
           const sortedNewMessages = sortMessagesByTimestamp(newMessages);
           setMessages(sortedNewMessages);
         });
+      }
 
-        setIsLoading(false);
-      })();
-    }
-
-    // Cleanup subscription on unmount
-    return () => {
-      if (unsubscribe) unsubscribe();
-    };
-  }, [currentUser?.id, selectedRoom]);
-
-  useEffect(() => {
-    let unsubscribe: (() => void) | null = null;
-
-    if (selectedUser) {
-      setIsChatDisabled(false);
-      setIsLoading(true);
-
-      (async () => {
+      if (selectedUser) {
         const userData = await getUserById(selectedUser);
         setUser(userData.data);
         setChatData(null);
@@ -140,15 +112,18 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
             setMessages(sortedNewMessages);
           });
         }
-        setIsLoading(false);
-      })();
-    }
+      }
+
+      setIsLoading(false);
+    };
+
+    fetchData(!!selectedRoom);
 
     // Cleanup subscription on unmount
     return () => {
       if (unsubscribe) unsubscribe();
     };
-  }, [currentUser?.id, selectedUser]);
+  }, [currentUser?.id, selectedRoom, selectedUser]);
 
   // Scroll view to bottom (last messages)
   useEffect(() => {
@@ -169,106 +144,9 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
     }, new Map<string, { name: string; avatar: string }>());
   }, [users, profiles]);
 
-  // Handle close modal
-  const handleToggleInfoModal = useCallback(() => {
-    setIsOpenInfoModal(!isOpenInfoModal);
-  }, [isOpenInfoModal]);
-
-  // Handle toggle add member modal
-  const handleToggleEditModal = useCallback(() => {
-    setIsOpenEditModal(!isOpenEditModal);
-    setIsOpenInfoModal(!isOpenInfoModal);
-    setChatData(chatData);
-    setChatName('');
-  }, [isOpenEditModal, isOpenInfoModal]);
-
-  // Handle selected dropdown option
-  const handleSelect = (selectedItem: DropdownItem) => {
-    setIsOpenInfoModal(false);
-
-    switch (selectedItem.value) {
-      case 'infoChat':
-        setIsOpenInfoModal(true);
-        break;
-      default:
-        break;
-    }
-  };
-
-  // Handle change title chat room
-  const handleChatNameChange = (
-    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const value = event.target.value.trimStart();
-    setChatName(value);
-
-    setChatData((prevData) => {
-      if (prevData) {
-        return { ...prevData, title: value };
-      }
-      return null;
-    });
-  };
-
-  // Handle set avatar for chat room
-  const handleChatAvatarChange = (avatar: string) => {
-    setChatAvatar(avatar);
-  };
-
-  // Handle update chat info
-  const handleUpdateChat = useCallback(async () => {
-    const data = {
-      ...chatData,
-      title: chatName || chatData?.title,
-      avatar: chatAvatar || chatData?.avatar
-    };
-
-    await updateChatInfo(chatData!.id, data);
-    handleToggleEditModal();
-
-    setChatData((prevData) => {
-      if (prevData) {
-        return { ...prevData, title: chatName };
-      }
-      return null;
-    });
-  }, [chatAvatar, chatData, chatName]);
-
-  /**
-   * Handle remove member from group
-   * @param {string} memberId
-   */
-  const handleRemoveMember = useCallback(
-    async (memberId: string) => {
-      if (!chatData) return;
-
-      const { data, error } = await removeMemberFromChat(chatData.id, memberId);
-
-      if (error) {
-        return;
-      }
-      setChatData(data);
-    },
-    [chatData]
-  );
-
-  const members = chatData?.members.map((userId) => {
-    const user = users.find((user) => user.id === userId);
-    const profile = profiles[userId];
-
-    return {
-      id: user?.id || '',
-      name: user?.userName || '',
-      avatar: profile?.avatar || ''
-    };
-  });
-
-  const profile = user ? profiles[user.id] : null;
-
   // Handle current user leave chat group
   const handleLeaveGroup = useCallback(async () => {
     await userLeaveGroup(chatData!.id, currentUser?.id);
-    setIsOpenInfoModal(false);
     setMessages([]);
     setChatData(null);
     setUser(null);
@@ -327,11 +205,6 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
     setEditingMessage(null);
   }, [editingMessage]);
 
-  // Disabled when the chat group is empty
-  const isSaveButtonDisabled = chatData?.isGroup
-    ? !chatData?.title.trim()
-    : false;
-
   if (chatError) {
     return <p>Get chats data error!!!</p>;
   }
@@ -340,43 +213,19 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
     <div className="w-screen h-screen flex flex-col bg-white">
       <div className="flex h-14 py-2 px-4 border-b-xs">
         {(selectedRoom || selectedUser) && (
-          <div className="w-full items-center flex justify-between">
-            <Avatar
-              name={chatData?.title || user?.userName}
-              avatar={chatData?.avatar || profile?.avatar}
-              circle
+          <Suspense fallback={<Spinner />}>
+            <ChatHeader
+              chatData={chatData!}
+              currentUserId={currentUser?.id}
+              handleLeaveGroup={handleLeaveGroup}
+              messages={messages}
+              profiles={profiles}
+              selectedRoom={selectedRoom!}
+              setChatData={setChatData}
+              user={user!}
+              users={users}
             />
-            <div
-              className={clsx('text-center my-0 mx-auto', {
-                'cursor-pointer': selectedRoom
-              })}
-              onClick={selectedRoom ? handleToggleInfoModal : undefined}
-            >
-              <p
-                className={clsx('text-lg font-medium', {
-                  'hover:text-primary': selectedRoom
-                })}
-              >
-                {chatData?.title || user?.userName}
-              </p>
-              <span
-                className={clsx('text-sm font-normal', {
-                  'hover:text-primary': selectedRoom
-                })}
-              >
-                {chatData?.isGroup ? `${chatData?.members.length} members` : ''}
-              </span>
-            </div>
-
-            {selectedRoom && messages.length ? (
-              <Dropdown
-                icon={faEllipsisVertical}
-                items={INFO_OPTIONS}
-                onSelect={handleSelect}
-                position={POSITION.TOP_RIGHT}
-              />
-            ) : null}
-          </div>
+          </Suspense>
         )}
       </div>
       <main
@@ -414,40 +263,6 @@ const ChatArea = memo(({ selectedRoom, selectedUser }: ChatProps) => {
           </>
         )}
       </main>
-      <Modal
-        isOpen={isOpenInfoModal}
-        title={chatData?.title}
-        icon={faPen}
-        onClick={handleToggleEditModal}
-        onCloseModal={handleToggleInfoModal}
-      >
-        <ModalInfo
-          avatar={chatData?.avatar || chatAvatar}
-          currentUserId={currentUser?.id}
-          member={members!}
-          count={chatData?.members.length}
-          name={chatData?.title || chatName}
-          isGroup={chatData?.isGroup}
-          isOwner={currentUser?.id === chatData?.owner}
-          onRemove={handleRemoveMember}
-          onClick={handleLeaveGroup}
-        />
-      </Modal>
-      <Modal
-        isOpen={isOpenEditModal}
-        title={'Edit chat'}
-        btnPrimary="Save"
-        onClick={handleUpdateChat}
-        onReturn={handleToggleEditModal}
-        isDisabled={isSaveButtonDisabled}
-      >
-        <ModalAction
-          onChange={handleChatNameChange}
-          name={chatName || chatData?.title}
-          avatar={chatAvatar || chatData?.avatar}
-          onAvatarChange={handleChatAvatarChange}
-        />
-      </Modal>
       <Modal
         isOpen={isOpenRemoveModal}
         title="Remove message?"
