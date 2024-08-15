@@ -171,13 +171,13 @@ const ChatHeader = ({
         circle
       />
       <div
-        className={clsx('text-center my-0 mx-auto', {
+        className={clsx('text-center my-0 mx-auto w-1/4', {
           'cursor-pointer': selectedRoom
         })}
         onClick={selectedRoom ? handleToggleInfoModal : undefined}
       >
         <p
-          className={clsx('text-lg font-medium', {
+          className={clsx('text-lg font-medium truncate', {
             'hover:text-primary': selectedRoom
           })}
         >
