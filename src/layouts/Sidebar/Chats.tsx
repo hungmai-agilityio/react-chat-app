@@ -64,7 +64,7 @@ const ChatSide = ({ onSelectRoom }: ChatProps) => {
 
   // Store and hook
   const { users, profiles } = useUsersWithProfiles();
-  const { currentUser, fetchUserData } = useAuthStore();
+  const { currentUser, currentUserProfile, fetchUserData } = useAuthStore();
 
   const {
     data: chatsData,
@@ -100,21 +100,25 @@ const ChatSide = ({ onSelectRoom }: ChatProps) => {
     };
   }, [currentUser, mutateChats]);
 
-  // Debounced search value update
   useEffect(() => {
-    const handler = debounce((value: string) => {
-      setDebouncedSearch(value);
-    });
-    handler(searchValue);
-
     fetchUserData();
-  }, [fetchUserData, searchValue]);
+  }, [fetchUserData]);
+
+  // Handle debounced search value update using useMemo
+  const debouncedSetSearchValue = useMemo(
+    () =>
+      debounce((value: string) => {
+        setDebouncedSearch(value);
+      }),
+    []
+  );
 
   // Handle change value in users tab
   const handleChangeValueUsers = (event: ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
     const { value } = event.target;
     setSearchValue(value);
+    debouncedSetSearchValue(value);
   };
 
   // Search filter chat
@@ -171,10 +175,14 @@ const ChatSide = ({ onSelectRoom }: ChatProps) => {
     }
   };
 
+  // Set value and convert last message to array
+  const lastMessage = useMemo(
+    () => Object.values(lastMessages),
+    [lastMessages]
+  );
+
   if (chatsLoading) return <Loading />;
   if (chatsError) return <div>Error loading chats</div>;
-
-  const currentProfile = currentUser ? profiles[currentUser.id] : null;
 
   return (
     <>
@@ -193,7 +201,7 @@ const ChatSide = ({ onSelectRoom }: ChatProps) => {
                 data={filterChats}
                 profiles={profiles}
                 onSelected={onSelectRoom}
-                messages={Object.values(lastMessages)}
+                messages={lastMessage}
                 currentUser={currentUser?.id}
               />
             </Suspense>
@@ -204,7 +212,7 @@ const ChatSide = ({ onSelectRoom }: ChatProps) => {
         </Suspense>
         <div className="p-3 bg-indigo-100">
           <UserMenu
-            avatar={currentProfile?.avatar || ''}
+            avatar={currentUserProfile?.avatar || ''}
             name={currentUser?.userName || 'User'}
             onSelect={handleSelect}
             position={POSITION.BOT_LEFT}

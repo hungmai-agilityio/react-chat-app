@@ -37,21 +37,24 @@ const UserSide = ({ onSelected }: UserProps) => {
   const { currentUser, fetchUserData } = useAuthStore();
 
   useEffect(() => {
-    const handler = debounce((value: string) => {
-      setDebouncedSearch(value);
-    });
-    handler(searchValue);
-
     fetchUserData();
-  }, [fetchUserData, searchValue]);
+  }, [fetchUserData]);
+
+  // Debounce function for search
+  const debouncedSetSearchValue = debounce((value: string) => {
+    setDebouncedSearch(value);
+  });
 
   const filterUsers = useMemo(
     () => searchFilter<IUser>(users, debouncedSearch, ['userName']),
     [users, debouncedSearch]
   );
 
+  // Handle search input change
   const handleChangeValueUsers = (event: ChangeEvent<HTMLInputElement>) => {
-    setSearchValue(event.target.value);
+    const value = event.target.value;
+    setSearchValue(value);
+    debouncedSetSearchValue(value);
   };
 
   return (
