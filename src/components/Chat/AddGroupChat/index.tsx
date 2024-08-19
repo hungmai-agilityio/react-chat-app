@@ -1,4 +1,4 @@
-import { useState, useCallback, ChangeEvent } from 'react';
+import { useState, useCallback, ChangeEvent, memo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 // Font Awesome
@@ -23,7 +23,7 @@ interface NewChatProps {
   users: IUser[];
   profiles: Record<string, IProfile>;
 }
-const AddGroupChat = ({ users, profiles }: NewChatProps) => {
+const AddGroupChat = memo(({ users, profiles }: NewChatProps) => {
   const [chatName, setChatName] = useState<string>('');
   const [chatAvatar, setChatAvatar] = useState<string>('');
   const [isOpenNewModal, setIsOpenNewModal] = useState<boolean>(false);
@@ -131,6 +131,6 @@ const AddGroupChat = ({ users, profiles }: NewChatProps) => {
       </Modal>
     </>
   );
-};
+});
 
 export default AddGroupChat;

@@ -114,12 +114,15 @@ const ChatSide = ({ onSelectRoom }: ChatProps) => {
   );
 
   // Handle change value in users tab
-  const handleChangeValueUsers = (event: ChangeEvent<HTMLInputElement>) => {
-    event.preventDefault();
-    const { value } = event.target;
-    setSearchValue(value);
-    debouncedSetSearchValue(value);
-  };
+  const handleChangeValueUsers = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      event.preventDefault();
+      const { value } = event.target;
+      setSearchValue(value);
+      debouncedSetSearchValue(value);
+    },
+    [debouncedSetSearchValue]
+  );
 
   // Search filter chat
   const filterChats = useMemo(() => {
@@ -162,18 +165,19 @@ const ChatSide = ({ onSelectRoom }: ChatProps) => {
   }, [currentUser]);
 
   // Handle selected item in user menu
-  const handleSelect = (item: DropdownItem) => {
-    switch (item.value) {
-      case 'profile':
-        handleToggleProfile();
-        break;
-      case 'logout':
-        handleToggleModalSignOut();
-        break;
-      default:
-        break;
-    }
-  };
+  const handleSelect = useCallback(
+    (item: DropdownItem) => {
+      switch (item.value) {
+        case 'profile':
+          handleToggleProfile();
+          break;
+        case 'logout':
+          handleToggleModalSignOut();
+          break;
+        default:
+          break;
+      }
+  }, [handleToggleModalSignOut, handleToggleProfile]);
 
   // Set value and convert last message to array
   const lastMessage = useMemo(
@@ -220,10 +224,10 @@ const ChatSide = ({ onSelectRoom }: ChatProps) => {
         </div>
       </div>
       <Modal
-        isOpen={isOpenProfile}
-        onCloseModal={handleToggleProfile}
-        styles="w-modal-xl"
-        title="Profile"
+          isOpen={isOpenProfile}
+          onCloseModal={handleToggleProfile}
+          styles="w-modal-xl"
+          title="Profile"
       >
         <Profile />
       </Modal>

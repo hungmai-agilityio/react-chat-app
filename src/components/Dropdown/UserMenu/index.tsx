@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 // Constants
 import { POSITION, SIZE, USER_OPTIONS } from '@/constants';
 
@@ -16,7 +18,7 @@ interface UserMenuProps {
     | POSITION.BOT_RIGHT;
 }
 
-const UserMenu = ({ name, avatar, onSelect, position }: UserMenuProps) => {
+const UserMenu = memo(({ name, avatar, onSelect, position }: UserMenuProps) => {
   return (
     <>
       <Dropdown items={USER_OPTIONS} onSelect={onSelect} position={position}>
@@ -35,6 +37,6 @@ const UserMenu = ({ name, avatar, onSelect, position }: UserMenuProps) => {
       </Dropdown>
     </>
   );
-};
+});
 
 export default UserMenu;

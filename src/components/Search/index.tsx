@@ -1,4 +1,4 @@
-import { ChangeEvent } from 'react';
+import { ChangeEvent, memo } from 'react';
 
 // FontAwesome
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
@@ -10,7 +10,7 @@ interface SearchProps {
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
-const Search = ({ value, icon, onChange }: SearchProps) => {
+const Search = memo(({ value, icon, onChange }: SearchProps) => {
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     onChange(event);
   };
@@ -32,6 +32,6 @@ const Search = ({ value, icon, onChange }: SearchProps) => {
       )}
     </div>
   );
-};
+});
 
 export default Search;
